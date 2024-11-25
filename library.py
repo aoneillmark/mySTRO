@@ -22,7 +22,9 @@ def single_piece(piece_id):
     """
     View or delete a single music piece.
     """
-    music_piece = database.get_or_404(MusicPiece, piece_id, description="Music piece not found.")
+    music_piece = database.get_or_404(
+        MusicPiece, piece_id, description="Music piece not found."
+    )
 
     if request.method == "POST":
         # Handle delete action
