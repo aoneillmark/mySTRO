@@ -1,7 +1,7 @@
 from flask import Flask, render_template, request
 import requests
 
-app = Flask(__name__)
+app = Flask(__name__, template_folder="src/templates")
 
 COMPOSERS = [
     "John Adams", "Thomas Adès", "Isaac Albéniz", "Tomaso Albinoni", "George Antheil",
