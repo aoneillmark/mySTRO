@@ -4,10 +4,11 @@ import requests
 app = Flask(__name__, template_folder='src/templates', static_folder='src/static')
 
 
-@app.route("/", methods=["GET", "POST"])
-def home():
-    # Load the list of composers
-    api_url = "https://api.openopus.org/work/dump.json"  # Change this if you find a broader endpoint
+# @app.route("/", methods=["GET", "POST"])
+# def home():
+#     # Load the list of composers
+#     api_url = "https://api.openopus.org/work/dump.json"  # Change this if you find a broader endpoint
+#     return 
 COMPOSERS = [
     "John Adams", "Thomas Adès", "Isaac Albéniz", "Tomaso Albinoni", "George Antheil",
     "Malcolm Arnold", "Milton Babbitt", "Johann Sebastian Bach", "Carl Philipp Emanuel Bach",
@@ -115,12 +116,6 @@ def search():
         selected_composer=selected_composer_id,
         works=works
     )
-
-
-@app.route("/library")
-def library():
-    return render_template("library.html")
-
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=8000)
