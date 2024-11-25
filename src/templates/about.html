@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About MySTRO</title>
+    <link href="/static/css/styles.css" rel="stylesheet">
+</head>
+<body class="bg-linen p-10">
+    <!-- Header -->
+    <header class="flex justify-between items-center bg-pumpkin text-white py-4 px-6 shadow-md">
+        <h1 class="text-3xl font-bold">MySTRO</h1>
+        <a href="/library" class="bg-dark-purple text-white px-4 py-2 rounded hover:bg-penn-red">Go to Library</a>
+    </header>
+
+    <!-- Main Content -->
+    <main class="mt-10 max-w-5xl mx-auto">
+        <!-- Introduction Section -->
+        <section class="text-center">
+            <h2 class="text-4xl font-bold text-dark-purple">About MySTRO</h2>
+            <p class="text-battleship-gray mt-4 text-lg">
+                MySTRO (or My Sound Track Recommendations, Organised) is an all-in-one solution for finding classical music by 
+                genre, style, and composer. Once you've found the classical music you want, you can add it to your Library for 
+                later review and enjoyment.
+            </p>
+        </section>
+
+        <!-- Feature Highlights -->
+        <section class="mt-10 grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div class="flex flex-col items-center text-center">
+                <img src="/static/images/genres.png" alt="Genres" class="w-32 h-32">
+                <h3 class="text-xl font-semibold text-dark-purple mt-4">Explore by Genre</h3>
+                <p class="text-battleship-gray mt-2">Easily browse and discover music from your favorite classical genres.</p>
+            </div>
+            <div class="flex flex-col items-center text-center">
+                <img src="/static/images/violin.png" alt="Styles" class="w-32 h-32">
+                <h3 class="text-xl font-semibold text-dark-purple mt-4">Discover Styles</h3>
+                <p class="text-battleship-gray mt-2">Dive deep into various styles and uncover hidden gems.</p>
+            </div>
+            <div class="flex flex-col items-center text-center">
+                <img src="/static/images/composer.png" alt="Composers" class="w-32 h-32">
+                <h3 class="text-xl font-semibold text-dark-purple mt-4">Search by Composer</h3>
+                <p class="text-battleship-gray mt-2">Find music by your favorite classical composers effortlessly.</p>
+            </div>
+            <div class="flex flex-col items-center text-center">
+                <img src="/static/images/library.png" alt="Library" class="w-32 h-32">
+                <h3 class="text-xl font-semibold text-dark-purple mt-4">Save to Library</h3>
+                <p class="text-battleship-gray mt-2">Add your favorite tracks to your Library for easy access later.</p>
+            </div>
+        </section>
+
+        <!-- CTA Buttons -->
+        <section class="mt-10 text-center">
+            <a href="/find-music" class="inline-block bg-penn-red text-white px-8 py-4 text-lg font-bold rounded hover:bg-dark-purple transition">
+                Find Music
+            </a>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="mt-20 text-center text-battleship-gray py-4 border-t border-battleship-gray">
+        <p>&copy; 2024 MySTRO. All rights reserved.</p>
+    </footer>
+</body>
+</html>
