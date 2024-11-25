@@ -1,18 +1,32 @@
 <!-- This is the library page -->
  
-<!DOCTYPE html>
-<html>
-<head>
-    <title>My Music Library</title>
-    <link href="/static/css/styles.css" rel="stylesheet">
-</head>
-<body>
-    <h1>My Music Library</h1>
-    
-    <ul>
-        <li>Song 1</li>
-        <li>Song 2</li>
-        <li>Song 3</li>
-    </ul>
-</body>
-</html>
+{% extends "index.html" %}
+
+{% block content %}
+<div class="bg-gray-100 p-10">
+    <h1 class="text-3xl font-bold text-center text-pumpkin">My Library</h1>
+    <div class="max-w-lg mx-auto mt-10">
+        {% if pieces %}
+            <ul class="bg-linen shadow-lg rounded-lg overflow-hidden">
+                {% for piece in pieces %}
+                <li class="border-b border-gray-200 px-6 py-4">
+                    <h2 class="text-xl font-semibold text-dark-purple">{{ piece.title }}</h2>
+                    <p class="text-battleship-gray">
+                        <strong>Composer:</strong> {{ piece.composer }}
+                    </p>
+                    <p class="text-battleship-gray">
+                        <strong>Opus Number:</strong> {{ piece.opus_number or "N/A" }}
+                    </p>
+                    <a href="{{ url_for('library.single_piece', piece_id=piece.id) }}"
+                       class="text-penn-red hover:text-dark-purple underline">
+                        View Details
+                    </a>
+                </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p class="text-center text-battleship-gray mt-10">No pieces in the library yet.</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock content %}
