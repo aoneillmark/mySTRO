@@ -1,0 +1,60 @@
+name: Build
+on: [push]
+
+jobs:
+  python-formatting:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.12
+
+      - name: Install flake8
+        run: pip install flake8
+
+      - name: Run flake8
+        run: flake8 . --exclude=app.py,test.py
+
+
+  # dinosaur-check:
+  #   needs: python-formatting
+  #   runs-on: ubuntu-latest
+
+  #   steps:
+  #     - name: Checkout
+  #       uses: actions/checkout@v4     
+
+  #     - name: Setup Python
+  #       uses: actions/setup-python@v4
+  #       with: 
+  #         python-version: 3.12
+      
+  #     - name: Install dependencies
+  #       run: |
+  #         pip install pytest
+  #         pip install flask
+      
+  #     - name: run pytest
+  #       run: pytest app_test.py
+                
+
+  deploy-to-impaas:
+    needs: python-formatting
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: ImPaaS-Deploy
+        uses: /impaas/impaas-deploy@v3
+        with:
+          app-name: mo1024-sse-app 
+          deployment-token: ${{ secrets.IMPAAS_DEPLOY_TOKEN }}
+          method: PLATFORM
+
