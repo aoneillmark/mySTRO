@@ -1,7 +1,7 @@
 from flask import Flask, render_template, request
 import requests
 
-app = Flask(__name__, template_folder="src/templates")
+app = Flask(__name__, template_folder='src/templates', static_folder='src/static')
 
 COMPOSERS = [
     "John Adams", "Thomas Adès", "Isaac Albéniz", "Tomaso Albinoni", "George Antheil",
@@ -58,7 +58,11 @@ COMPOSERS = [
 
 @app.route("/")
 def hello_world():
-    return render_template("form.html", composers=COMPOSERS)
+    return render_template("about.html", composers=COMPOSERS)
+
+@app.route("/form")
+def form():
+    return render_template("form.html")
 
 @app.route("/library")
 def library():
