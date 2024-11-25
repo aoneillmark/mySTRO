@@ -1,2 +1,29 @@
 <!-- This is the results page where users can add the results to their libraries, including a link
  to the library.html -->
+
+ <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Results</title>
+</head>
+<body>
+    <h1>Welcome, {{ name }}!</h1>
+    <p>Thank you for using mySTRO. You selected the composer:</p>
+    <h2>{{ selected_composer }}</h2>
+    
+    {% if composer_details %}
+        <h3>About {{ selected_composer }}:</h3>
+        <ul>
+            {% for key, value in composer_details.items() %}
+                <li><strong>{{ key }}:</strong> {{ value }}</li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>Sorry, no additional information is available for {{ selected_composer }}.</p>
+    {% endif %}
+    
+    <a href="/">Go back to the form</a>
+</body>
+</html>
