@@ -1,1 +1,1 @@
-from Blueprint.library import library
+from .library import library
