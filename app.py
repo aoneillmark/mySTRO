@@ -60,7 +60,7 @@ def library():
 @app.route("/search", methods=["POST"])
 def search():
 
-    print("Form Data:", request.form)
+    user_name = request.form.get("name")
     # Get the composer ID from the form
     selected_composer_id = request.form.get("composer_id")
 
@@ -81,7 +81,8 @@ def search():
     # Render the results page
     return render_template(
         "results.html",
-        composer_id=selected_composer_id,
+        name=user_name,
+        composer_name=selected_composer_id,
         works=works
     )
 
