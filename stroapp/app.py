@@ -1,6 +1,6 @@
 from flask import Flask, render_template, request
 import requests
-from database import db as database
+from stroapp.database import db as database
 
 app = Flask(__name__, template_folder="src/templates", static_folder="src/static")
 
@@ -12,7 +12,7 @@ app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 database.init_app(app)
 
 # Register blueprints
-import Blueprint as blueprints
+from stroapp import Blueprint as blueprints
 
 app.register_blueprint(blueprints.library)
 

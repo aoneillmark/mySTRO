@@ -1,4 +1,4 @@
-from Blueprint.library import database as db
+from stroapp.Blueprint.library import database as db
 
 
 class MusicPiece(db.Model):

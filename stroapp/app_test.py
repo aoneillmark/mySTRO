@@ -1,9 +1,8 @@
-from flask import Flask, render_template, request
-import requests
-from database import db
+from flask import Flask
+from stroapp.database import db
 
 # import Blueprint as blueprints
-from models.musicpiece import MusicPiece
+from stroapp.models import MusicPiece
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///your_database.db'
