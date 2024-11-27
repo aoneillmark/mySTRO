@@ -1,12 +1,19 @@
 from flask import Flask, render_template, request
 import requests
-from database import db as database
+#from database import db as database
 
 app = Flask(__name__, template_folder="src/templates", static_folder="src/static")
 
+<<<<<<< Updated upstream
 # # Databse initialisation -------------------------------------------------------
 # app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///todo.db"
 # app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
+=======
+# Database initialisation -------------------------------------------------------
+'''
+app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///todo.db"
+app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
+>>>>>>> Stashed changes
 
 # # Set up extensions
 # database.init_app(app)
@@ -19,11 +26,19 @@ app = Flask(__name__, template_folder="src/templates", static_folder="src/static
 # # Register cli commands
 # from cli import create_all, drop_all, populate
 
+<<<<<<< Updated upstream
 # with app.app_context():
 #     app.cli.add_command(create_all)
 #     app.cli.add_command(drop_all)
 #     app.cli.add_command(populate)
 # # -------------------------------------------------------------------------------
+=======
+with app.app_context():
+    app.cli.add_command(create_all)
+    app.cli.add_command(drop_all)
+    app.cli.add_command(populate)'''
+# -------------------------------------------------------------------------------
+>>>>>>> Stashed changes
 
 
 @app.route("/form", methods=["GET", "POST"])
@@ -73,6 +88,7 @@ def search():
 
     # Get selected composer and genre from the form
     selected_composer_id = request.form.get("composer_id")
+    name = request.form.get("name")  # Get name from form
     selected_genre = request.form.get("genre")
 
     if not selected_composer_id:
@@ -98,8 +114,11 @@ def search():
         "results.html",
         composer_id=selected_composer_id,
         genre=selected_genre,
+        name=name,  # Pass name to template
         works=works
+
     )
+
     
 
 if __name__ == "__main__":
