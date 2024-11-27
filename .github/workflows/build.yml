@@ -15,8 +15,23 @@ jobs:
      - name: Build Tailwind CSS
        run: npm run build:css
 
+ unit-testing:
+    needs: build-tailwind
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.12
+      - name: unit_test1
+        run: pip install -r requirements.txt
+      - name: Install pytest
+        run: pytest app_test2.py
+
  deploy-to-impaas:
-   needs: build-tailwind
+   needs: unit-testing
    runs-on: ubuntu-latest
    steps:
      - name: Checkout
@@ -27,3 +42,5 @@ jobs:
          app-name: mystro
          deployment-token: ${{ secrets.IMPAAS_DEPLOY_TOKEN }}
          method: PLATFORM
+
+#add python formatting flake 8

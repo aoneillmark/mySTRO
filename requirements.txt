@@ -2,4 +2,6 @@ Flask==3.0.3
 pytest==8.3.3
 requests==2.32.3
 SQLAlchemy==2.0.36
+requests-mock==1.12.1
 #add flask_sqlalchemy
+#pip install pytest requests-mock

@@ -26,7 +26,7 @@
                     style="height: 50px; padding-left: 12px;" required>
                     <option value="" disabled selected>Select a composer</option>
                     {% for composer in composers %}
-                        <option value="{{ composer['id'] }}">{{ composer['complete_name'] }} ({{ composer['epoch'] }})</option>
+                        <option value="{{ composer['id'] }}">{{ composer['name'] }} ({{ composer['epoch'] }})</option>
                     {% endfor %}
                 </select>
                 <br><br>
