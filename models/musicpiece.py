@@ -7,4 +7,4 @@ class MusicPiece(db.Model):
     title = db.Column(db.String(80), nullable=False)
     composer = db.Column(db.String(80), nullable=False)
     genre = db.Column(db.String(80), nullable=False)
-    description = db.Column(db.String(80), nullable=False)
+    description = db.Column(db.String(80), nullable=True)
