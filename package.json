@@ -3,6 +3,6 @@
     "tailwindcss": "^3.4.15"
   },
   "scripts": {
-    "build:css": "tailwindcss build stroapp/src/static/css/tailwind.css -o src/static/css/styles.css"
+    "build:css": "tailwindcss build src/static/css/tailwind.css -o src/static/css/styles.css"
   }
 }
