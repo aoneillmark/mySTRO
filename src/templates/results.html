@@ -26,6 +26,24 @@
   {% else %}
     <p>No works found for this composer.</p>
   {% endif %}
+
+    <h2>Results for Composer ID: {{ composer_id }} and Genre: {{ genre }}</h2>
+
+    <ul>
+      {% if works %}
+          {% for work in works %}
+              <li>
+                  <strong>{{ work['title'] }}</strong>
+                  {% if work['subtitle'] %}
+                      <em>({{ work['subtitle'] }})</em>
+                  {% endif %}
+                  - {{ work['genre'] }}
+              </li>
+          {% endfor %}
+      {% else %}
+          <li>No works found for the selected composer and genre.</li>
+      {% endif %}
+    </ul>
     
     <a href="/">Go back to the form</a>
 </body>
