@@ -3,7 +3,7 @@ import requests
 
 app = Flask(__name__, template_folder='src/templates', static_folder='src/static')
 
-@app.route("/", methods=["GET", "POST"])
+@app.route("/form", methods=["GET", "POST"])
 def home():
     # Load the list of composers
     api_url = "https://api.openopus.org/work/dump.json"  # Change this if you find a broader endpoint
