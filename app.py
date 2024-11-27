@@ -1,8 +1,29 @@
 from flask import Flask, render_template, request
 import requests
+from database import db as database
 
 app = Flask(__name__, template_folder="src/templates", static_folder="src/static")
 
+# Databse initialisation -------------------------------------------------------
+app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///todo.db"
+app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
+
+# Set up extensions
+database.init_app(app)
+
+# Register blueprints
+import Blueprint as blueprints
+
+app.register_blueprint(blueprints.library)
+
+# Register cli commands
+from cli import create_all, drop_all, populate
+
+with app.app_context():
+    app.cli.add_command(create_all)
+    app.cli.add_command(drop_all)
+    app.cli.add_command(populate)
+# -------------------------------------------------------------------------------
 
 @app.route("/form", methods=["GET", "POST"])
 def home():
