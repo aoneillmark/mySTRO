@@ -1,4 +1,4 @@
-from library.database import database as db
+from Blueprint.library import database as db
 
 
 class MusicPiece(db.Model):
