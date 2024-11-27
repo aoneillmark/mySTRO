@@ -17,11 +17,11 @@
          <br><br>
  
          <!-- Dropdown for composers -->
-         <label for="composer_name">Choose a Composer:</label>
-         <select id="composer_name" name="composer_name" required>
+         <label for="composer_id">Choose a Composer:</label>
+         <select id="composer_id" name="composer_id" required>
              <option value="" disabled selected>Select a composer</option>
              {% for composer in composers %}
-                 <option value="{{ composer['id'] }}">{{ composer['name'] }}</option>
+                 <option value="{{ composer['id'] }}">{{ composer['complete_name'] }} ({{ composer['epoch'] }})</option>
              {% endfor %}
          </select>
          <br><br>
