@@ -15,7 +15,7 @@ jobs:
      - name: Build Tailwind CSS
        run: npm run build:css
 
-   unit-testing:
+ unit-testing:
     needs: build-tailwind
     runs-on: ubuntu-latest
     steps:
@@ -30,7 +30,7 @@ jobs:
       - name: Install pytest
         run: pytest *.py
 
-deploy-to-impaas:
+ deploy-to-impaas:
    needs: unit-testing
    runs-on: ubuntu-latest
    steps:
