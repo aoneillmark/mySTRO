@@ -28,7 +28,7 @@ jobs:
       - name: unit_test1
         run: pip install -r requirements.txt
       - name: Install pytest
-        run: pytest *.py
+        run: app_test2.py
 
  deploy-to-impaas:
    needs: unit-testing
@@ -42,3 +42,5 @@ jobs:
          app-name: mystro
          deployment-token: ${{ secrets.IMPAAS_DEPLOY_TOKEN }}
          method: PLATFORM
+
+#add python formatting flake 8
