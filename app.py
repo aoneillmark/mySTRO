@@ -75,37 +75,49 @@ def form():
 def library():
    return render_template("library.html")
 
+
 @app.route("/search", methods=["POST"])
 def search():
-   print("Form Data:", request.form)
+    print("Form Data:", request.form)
 
-   selected_composer_id = request.form.get("composer_id")
-   name = request.form.get("name")
-   selected_genre = request.form.get("genre")
+    selected_composer_id = request.form.get("composer_id")
+    name = request.form.get("name")
+    selected_genre = request.form.get("genre")
 
-   if not selected_composer_id:
-       return "No composer selected. Please try again."
-   if not selected_genre:
-       return "No genre selected. Please try again."
+    if not selected_composer_id:
+        return "No composer selected. Please try again."
+    if not selected_genre:
+        return "No genre selected. Please try again."
 
-   works_url = f"https://api.openopus.org/work/list/composer/{selected_composer_id}/genre/all.json"
-   response = requests.get(works_url)
+    works_url = f"https://api.openopus.org/work/list/composer/{selected_composer_id}/genre/all.json"
+    response = requests.get(works_url)
+    print(response.json())
 
-   works = []
-   if response.status_code == 200:
-       data = response.json()
-       all_works = data.get("works", [])
-       works = [work for work in all_works if work.get("genre") == selected_genre]
-   else:
-       return f"Failed to fetch works for composer ID {selected_composer_id}. Status Code: {response.status_code}"
+    works = []
+    if response.status_code == 200:
+        data = response.json()
+        all_works = data.get("works", [])
+        works = [
+            {
+                "title": work.get("title"),
+                "genre": work.get("genre"),
+                "popular": work.get("popular"),
+                "recommended": work.get("recommended"),
+            }
+            for work in all_works
+            if work.get("genre") == selected_genre
+        ]
+    else:
+        return f"Failed to fetch works for composer ID {selected_composer_id}. Status Code: {response.status_code}"
 
-   return render_template(
-       "results.html",
-       composer_id=selected_composer_id,
-       genre=selected_genre,
-       name=name,
-       works=works
-   )
+    return render_template(
+        "results.html",
+        composer_id=selected_composer_id,
+        genre=selected_genre,
+        name=name,
+        works=works
+    )
+
 
 if __name__ == "__main__":
    app.run(host="0.0.0.0", port=8000)
