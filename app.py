@@ -21,7 +21,7 @@ def home():
 
 @app.route("/")
 def hello_world():
-    return render_template("about.html", composers=COMPOSERS)
+    return render_template("about.html")
 
 @app.route("/form")
 def form():
