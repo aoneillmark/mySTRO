@@ -1,8 +1,8 @@
 from flask import Blueprint, render_template, redirect, url_for, request
 from sqlalchemy import select
 
-from app.database import database
-from app.models.music_piece import MusicPiece
+from database import db as database
+from models.musicpiece import MusicPiece
 
 # Define the Blueprint for the library
 library = Blueprint("library", __name__, url_prefix="/library")
