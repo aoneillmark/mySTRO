@@ -1,8 +1,9 @@
-from flask import Flask
+from flask import Flask, render_template, request
+import requests
 from database import db
 
 # import Blueprint as blueprints
-from models import MusicPiece
+from models.musicpiece import MusicPiece
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///your_database.db'

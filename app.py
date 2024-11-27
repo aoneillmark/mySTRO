@@ -17,7 +17,7 @@ import Blueprint as blueprints
 app.register_blueprint(blueprints.library)
 
 # Register cli commands
-from .cli import create_all, drop_all, populate
+from cli import create_all, drop_all, populate
 
 with app.app_context():
     app.cli.add_command(create_all)

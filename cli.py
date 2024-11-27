@@ -2,7 +2,7 @@ import click
 from flask.cli import with_appcontext
 
 from database import db as database
-from models import MusicPiece
+from models.musicpiece import MusicPiece
 
 
 @click.command("create_all", help="Create all tables in the app's databases")

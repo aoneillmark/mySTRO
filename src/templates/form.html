@@ -1,7 +1,7 @@
 <!-- This is the form page where users input their name and select their preferences; 
  once form is submitted, user is sent to results.html -->
 
- <!DOCTYPE html>
+<!DOCTYPE html>
  <html lang="en">
  <head>
      <meta charset="UTF-8">
@@ -15,7 +15,6 @@
          <label for="namefield">Name:</label>
          <input type="text" id="namefield" name="name" required>
          <br><br>
- 
          <!-- Dropdown for composers -->
          <label for="composer_id">Choose a Composer:</label>
          <select id="composer_id" name="composer_id" required>
@@ -25,10 +24,8 @@
              {% endfor %}
          </select>
          <br><br>
- 
          <!-- Submit button -->
          <button type="submit">Submit</button>
      </form>
  </body>
  </html>
- 
