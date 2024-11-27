@@ -37,25 +37,8 @@ def library():
 
 
 @app.route("/search", methods=["POST"])
-def search_composers():
-    selected_composer = request.form.get("composer_name")
-
-    api_url = f"https://api.openopus.org/composer/list/search/{selected_composer}.json"
-    response = requests.get(api_url)
-
-    composers = []
-    if response.status_code == 200:
-        data = response.json()
-        composers = data.get("composers", [])
-    else:
-        return f"Failed to fetch composers. Status Code: {response.status_code}"
-
-    # Render the form with the list of composers
-    return render_template("form.html", composers=composers)
-
-
-@app.route("/search", methods=["POST"])
 def search():
+<<<<<<< HEAD
     # Get user input from the form
     user_name = request.form.get("name")
     selected_composer_id = request.form.get(
@@ -66,6 +49,18 @@ def search():
     works_url = (
         f"https://api.openopus.org/work/dump/composer/{selected_composer_id}.json"
     )
+=======
+
+    print("Form Data:", request.form)
+    # Get the composer ID from the form
+    selected_composer_id = request.form.get("composer_id")
+
+    if not selected_composer_id:
+        return "No composer selected. Please try again."
+
+    # Fetch the works of the selected composer using their ID
+    works_url = f"https://api.openopus.org/work/list/composer/{selected_composer_id}/genre/all.json"
+>>>>>>> 6cd451c (App.py updates)
     response = requests.get(works_url)
 
     works = []
@@ -78,9 +73,14 @@ def search():
     # Render the results page
     return render_template(
         "results.html",
+<<<<<<< HEAD
         name=user_name,
         selected_composer=selected_composer_id,
         works=works,
+=======
+        composer_id=selected_composer_id,
+        works=works
+>>>>>>> 6cd451c (App.py updates)
     )
 
 
