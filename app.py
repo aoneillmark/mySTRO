@@ -25,6 +25,7 @@ with app.app_context():
     app.cli.add_command(populate)
 # -------------------------------------------------------------------------------
 
+
 @app.route("/form", methods=["GET", "POST"])
 def home():
     # Load the list of composers
@@ -60,7 +61,7 @@ def library():
 @app.route("/search", methods=["POST"])
 def search():
 
-    print("Form Data:", request.form)
+    user_name = request.form.get("name")
     # Get the composer ID from the form
     selected_composer_id = request.form.get("composer_id")
 
@@ -80,10 +81,9 @@ def search():
 
     # Render the results page
     return render_template(
-        "results.html",
-        composer_id=selected_composer_id,
-        works=works
+        "results.html", name=user_name, composer_name=selected_composer_id, works=works
     )
+
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=8000)
