@@ -1,8 +1,8 @@
 import click
 from flask.cli import with_appcontext
 
-from stroapp.database import db as database
-from stroapp.models import MusicPiece
+from database import db as database
+from models import MusicPiece
 
 
 @click.command("create_all", help="Create all tables in the app's databases")

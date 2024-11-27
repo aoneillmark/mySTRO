@@ -1,8 +1,8 @@
 from flask import Blueprint, render_template, redirect, url_for, request
 from sqlalchemy import select
 
-from stroapp.database import db as database
-from stroapp.models.musicpiece import MusicPiece
+from database import db as database
+from models.musicpiece import MusicPiece
 
 # Define the Blueprint for the library
 library = Blueprint("library", __name__, url_prefix="/library")
