@@ -7,7 +7,7 @@ app = Flask(__name__, template_folder="src/templates", static_folder="src/static
 @app.route("/form", methods=["GET", "POST"])
 def home():
     # Load the list of composers
-    api_url = "https://api.openopus.org/work/dump.json"  # Change this if you find a broader endpoint
+    api_url = "https://api.openopus.org/composer/list/name/all.json"  # Change this if you find a broader endpoint
     response = requests.get(api_url)
 
     composers = []
@@ -38,18 +38,6 @@ def library():
 
 @app.route("/search", methods=["POST"])
 def search():
-<<<<<<< HEAD
-    # Get user input from the form
-    user_name = request.form.get("name")
-    selected_composer_id = request.form.get(
-        "composer_name"
-    )  # Using ID or slug from dropdown
-
-    # Fetch the works of the selected composer using their ID/slug
-    works_url = (
-        f"https://api.openopus.org/work/dump/composer/{selected_composer_id}.json"
-    )
-=======
 
     print("Form Data:", request.form)
     # Get the composer ID from the form
@@ -60,7 +48,6 @@ def search():
 
     # Fetch the works of the selected composer using their ID
     works_url = f"https://api.openopus.org/work/list/composer/{selected_composer_id}/genre/all.json"
->>>>>>> 6cd451c (App.py updates)
     response = requests.get(works_url)
 
     works = []
@@ -73,16 +60,9 @@ def search():
     # Render the results page
     return render_template(
         "results.html",
-<<<<<<< HEAD
-        name=user_name,
-        selected_composer=selected_composer_id,
-        works=works,
-=======
         composer_id=selected_composer_id,
         works=works
->>>>>>> 6cd451c (App.py updates)
     )
-
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=8000)
