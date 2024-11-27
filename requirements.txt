@@ -2,3 +2,4 @@ Flask==3.0.3
 pytest==8.3.3
 requests==2.32.3
 SQLAlchemy==2.0.36
+#add flask_sqlalchemy
