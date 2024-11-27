@@ -31,7 +31,7 @@ jobs:
         run: pytest *.py
 
 deploy-to-impaas:
-   needs: build-tailwind
+   needs: unit-testing
    runs-on: ubuntu-latest
    steps:
      - name: Checkout
