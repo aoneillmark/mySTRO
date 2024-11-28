@@ -78,8 +78,6 @@ def library():
 
 @app.route("/search", methods=["POST"])
 def search():
-    print("Form Data:", request.form)
-
     selected_composer_id = request.form.get("composer_id")
     name = request.form.get("name")
     selected_genre = request.form.get("genre")
@@ -91,7 +89,6 @@ def search():
 
     works_url = f"https://api.openopus.org/work/list/composer/{selected_composer_id}/genre/all.json"
     response = requests.get(works_url)
-    print(response.json())
 
     works = []
     if response.status_code == 200:
@@ -101,8 +98,9 @@ def search():
             {
                 "title": work.get("title"),
                 "genre": work.get("genre"),
-                "popular": work.get("popular"),
-                "recommended": work.get("recommended"),
+                "subtitle": work.get("subtitle"),
+                "popular": work.get("popular") == "1",  # Convert string "1" to True
+                "recommended": work.get("recommended") == "1"  # Convert string "1" to True
             }
             for work in all_works
             if work.get("genre") == selected_genre
