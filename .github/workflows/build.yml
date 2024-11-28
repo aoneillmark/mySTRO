@@ -14,19 +14,7 @@ jobs:
        run: npm install
      - name: Build Tailwind CSS
        run: npm run build:css
- build-tailwind:
-   runs-on: ubuntu-latest
-   steps:
-     - name: Checkout
-       uses: actions/checkout@v4
-     - name: Setup Node.js
-       uses: actions/setup-node@v4
-       with:
-         node-version: '16'
-     - name: Install npm dependencies
-       run: npm install
-     - name: Build Tailwind CSS
-       run: npm run build:css
+       
 
  build-database: # Should run CLI commands: flask drop_all, flask create_all, flask populate
     needs: build-tailwind
