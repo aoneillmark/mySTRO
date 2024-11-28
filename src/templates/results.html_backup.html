@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+   <meta charset="UTF-8">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <title>Results</title>
+   <style>
+       body {
+           background-color: #FDF5E6;  /* Old lace background */
+           color: #8B4513;  /* Saddle brown text */
+           font-family: Georgia, serif;
+           margin: 40px;
+       }
+       h1, h2 {
+           color: #D2691E;  /* Chocolate headers */
+       }
+       ul {
+           list-style-type: none;
+           padding: 0;
+       }
+       li {
+           background-color: #FFDAB9;  /* Peach puff list items */
+           margin: 10px 0;
+           padding: 15px;
+           border-radius: 5px;
+           box-shadow: 2px 2px 5px rgba(139, 69, 19, 0.2);
+       }
+       a {
+           display: inline-block;
+           background-color: #D2691E;
+           color: white;
+           padding: 10px 20px;
+           text-decoration: none;
+           border-radius: 5px;
+           margin-top: 20px;
+       }
+       a:hover {
+           background-color: #8B4513;
+       }
+   </style>
+</head>
+<body>
+   <h1>Welcome, {{ name }}!</h1>
+   <p>Thank you for using mySTRO. Here's your selected composer's best stuff!</p>
+
+   <h2>Results for Genre: {{ genre }}</h2>
+
+   <ul>
+       {% if works %}
+           {% for work in works %}
+               <li>
+                   <strong>{{ work['title'] }}</strong>
+                   {% if work['subtitle'] %}
+                       <em>({{ work['subtitle'] }})</em>
+                   {% endif %}
+                   - {{ work['genre'] }}
+               </li>
+           {% endfor %}
+       {% else %}
+           <li>No works found for the selected composer and genre.</li>
+       {% endif %}
+   </ul>
+   
+   <a href="/form">Go back to the form</a>
+</body>
+</html>
