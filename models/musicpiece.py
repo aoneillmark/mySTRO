@@ -1,4 +1,4 @@
-from Blueprint.library import database as db
+from database import db
 
 
 class MusicPiece(db.Model):
@@ -8,3 +8,6 @@ class MusicPiece(db.Model):
     composer = db.Column(db.String(80), nullable=False)
     genre = db.Column(db.String(80), nullable=False)
     description = db.Column(db.String(80), nullable=True)
+
+    def __repr__(self): # just like overloading the toString method in C++
+        return f"<MusicPiece {self.id}: {self.title} by {self.composer}>"

@@ -10,13 +10,16 @@
                 <strong>Composer:</strong> {{ piece.composer }}
             </p>
             <p class="text-battleship-gray mt-2">
-                <strong>Opus Number:</strong> {{ piece.opus_number or "N/A" }}
+                <strong>Genre:</strong> {{ piece.genre }}
+            </p>
+            <p class="text-battleship-gray mt-2">
+                <strong>Description:</strong> {{ piece.description or "No description available" }}
             </p>
             <form action="{{ url_for('library.single_piece', piece_id=piece.id) }}" method="POST">
                 <input
                     type="submit"
                     name="submit_button"
-                    value="delete"
+                    value="Delete"
                     class="mt-4 bg-penn-red text-white px-4 py-2 rounded hover:bg-dark-purple">
             </form>
         </div>

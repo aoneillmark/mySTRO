@@ -1,22 +1,54 @@
 name: Build
 on: [push]
 jobs:
- build-tailwind:
-   runs-on: ubuntu-latest
-   steps:
-     - name: Checkout
-       uses: actions/checkout@v4
-     - name: Setup Node.js
-       uses: actions/setup-node@v4
-       with:
-         node-version: '16'
-     - name: Install npm dependencies
-       run: npm install
-     - name: Build Tailwind CSS
-       run: npm run build:css
+  setup:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup Environment
+        run: |
+          export FLASK_APP=app.py
+          echo "Setup complete"
 
- unit-testing:
+  build-tailwind:
+    needs: setup
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '16'
+      - name: Install npm dependencies
+        run: npm install
+      - name: Build Tailwind CSS
+        run: npm run build:css
+    
+
+  build-database: # Should run CLI commands: flask drop_all, flask create_all, flask populate
     needs: build-tailwind
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.12
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+      - name: Build Database
+        run: |
+          flask drop_all
+          flask create_all
+          flask populate
+
+
+
+  unit-testing:
+    needs: build-database
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -30,17 +62,17 @@ jobs:
       - name: Install pytest
         run: pytest app_test2.py
 
- deploy-to-impaas:
-   needs: unit-testing
-   runs-on: ubuntu-latest
-   steps:
-     - name: Checkout
-       uses: actions/checkout@v4
-     - name: ImPaaS-Deploy
-       uses: /impaas/impaas-deploy@v3
-       with:
-         app-name: mystro
-         deployment-token: ${{ secrets.IMPAAS_DEPLOY_TOKEN }}
-         method: PLATFORM
+  deploy-to-impaas:
+    needs: unit-testing
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: ImPaaS-Deploy
+        uses: /impaas/impaas-deploy@v3
+        with:
+          app-name: mystro
+          deployment-token: ${{ secrets.IMPAAS_DEPLOY_TOKEN }}
+          method: PLATFORM
 
 #add python formatting flake 8
