@@ -8,6 +8,14 @@
     <link href="{{ url_for('static', filename='css/styles.css') }}" rel="stylesheet">
 </head>
 <body>
+    <header class="flex justify-between items-center bg-pumpkin text-white py-4 px-6 shadow-md">
+        <h1 class="text-3xl font-bold">MySTRO</h1>
+        <nav style="display: flex; gap: 24px;">
+            <a href="/" class="bg-dark-purple text-white px-4 py-2 rounded hover:bg-penn-red{% if request.path == '/' %} bg-penn-red{% endif %}">About</a>
+            <a href="/form" class="bg-dark-purple text-white px-4 py-2 rounded hover:bg-penn-red{% if request.path == '/form' %} bg-penn-red{% endif %}">Find Music</a>
+            <a href="/library" class="bg-dark-purple text-white px-4 py-2 rounded hover:bg-penn-red{% if request.path == '/library' %} bg-penn-red{% endif %}">Library</a>
+         </nav>
+    </header>
     {% block content %}{% endblock %}
 </body>
 </html>

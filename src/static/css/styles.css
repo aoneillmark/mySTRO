@@ -812,3 +812,138 @@ video {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
+
+/* Search box and filters */
+.search-box, .filters, .composer-filters {
+  margin: 20px 0;
+  padding: 15px;
+  background-color: #FFDAB9;
+  border-radius: 5px;
+  display: flex;
+  gap: 20px;
+  align-items: center;
+}
+
+.search-input {
+  flex-grow: 1;
+  max-width: 500px;
+  padding: 8px 16px;
+  border: 2px solid #D2691E;
+  border-radius: 20px;
+  font-size: 1em;
+  outline: none;
+}
+
+.search-input:focus {
+  box-shadow: 0 0 5px rgba(210, 105, 30, 0.3);
+}
+
+.filter-button {
+  padding: 8px 16px;
+  border: 2px solid #D2691E;
+  border-radius: 20px;
+  background-color: white;
+  color: #D2691E;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.filter-button.active {
+  background-color: #D2691E;
+  color: white;
+}
+
+.filter-button.composer {
+  font-size: 0.9em;
+  white-space: nowrap;
+}
+
+/* Work items */
+.work-item {
+  display: grid;
+  grid-template-columns: 200px 1fr auto auto auto;
+  gap: 20px;
+  background-color: #FFDAB9;
+  margin: 10px 0;
+  padding: 15px;
+  border-radius: 5px;
+  box-shadow: 2px 2px 5px rgba(139, 69, 19, 0.2);
+  align-items: center;
+}
+
+.composer-name {
+  color: #8B4513;
+  font-style: italic;
+  font-size: 0.95em;
+  border-right: 2px solid #D2691E;
+  padding-right: 15px;
+}
+
+/* Badges */
+.badges {
+  display: flex;
+  gap: 10px;
+  margin-left: 20px;
+  align-items: center;
+}
+
+.badge {
+  padding: 5px 10px;
+  border-radius: 15px;
+  font-size: 0.8em;
+  font-weight: bold;
+  color: white;
+  white-space: nowrap;
+}
+
+/* Genre badges */
+.badge.genre.Orchestral { background-color: #2F4F4F; }
+.badge.genre.Chamber { background-color: #556B2F; }
+.badge.genre.Keyboard { background-color: #8B4513; }
+.badge.genre.Vocal { background-color: #4A4A4A; }
+.badge.genre.Stage { background-color: #4B0082; }
+.badge.genre.Choral { background-color: #683A5E; }
+.badge.genre.Opera { background-color: #800020; }
+.badge.popular { background-color: #D2691E; }
+.badge.recommended { background-color: #228B22; }
+
+/* Action buttons */
+.action-button {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  color: white;
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: 10px;
+  transition: all 0.2s ease;
+  text-decoration: none;
+}
+
+.youtube-button {
+  background-color: #FF0000;
+}
+
+.youtube-button:hover {
+  background-color: #CC0000;
+  transform: scale(1.1);
+}
+
+.add-button {
+  background-color: #D2691E;
+}
+
+.add-button:hover {
+  background-color: #8B4513;
+  transform: scale(1.1);
+}
+
+.highlight {
+  background-color: rgba(210, 105, 30, 0.2);
+  padding: 0 2px;
+  border-radius: 3px;
+}
