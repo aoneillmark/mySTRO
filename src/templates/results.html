@@ -14,7 +14,7 @@
         h1, h2 {
             color: #D2691E;
         }
-        .filters {
+        .filters, .search-box {
             margin: 20px 0;
             padding: 15px;
             background-color: #FFDAB9;
@@ -30,11 +30,23 @@
             background-color: white;
             color: #D2691E;
             cursor: pointer;
-            transition: all 0.3s ease;
+            transition: all 0.2s ease;
         }
         .filter-button.active {
             background-color: #D2691E;
             color: white;
+        }
+        .search-input {
+            padding: 8px 16px;
+            border: 2px solid #D2691E;
+            border-radius: 20px;
+            width: 300px;
+            font-size: 1em;
+            outline: none;
+            transition: all 0.2s ease;
+        }
+        .search-input:focus {
+            box-shadow: 0 0 5px rgba(210, 105, 30, 0.3);
         }
         ul {
             list-style-type: none;
@@ -67,10 +79,31 @@
             white-space: nowrap;
         }
         .popular {
-            background-color: #D2691E;
+            background-color: #D2691E;  /* Orange for popular */
         }
         .recommended {
-            background-color: #228B22;
+            background-color: #228B22;  /* Green for recommended */
+        }
+        /* Refined animations */
+        .work-item {
+            transition: all 0.2s ease-out;
+            opacity: 1;
+            transform: translateY(0);
+            max-height: 100px;
+            margin: 10px 0;
+        }
+        .work-item.hidden {
+            opacity: 0;
+            transform: translateY(-10px);
+            max-height: 0;
+            margin: 0;
+            padding: 0;
+            pointer-events: none;
+        }
+        .highlight {
+            background-color: rgba(210, 105, 30, 0.2);
+            padding: 0 2px;
+            border-radius: 3px;
         }
         a.back-button {
             display: inline-block;
@@ -84,47 +117,60 @@
         a.back-button:hover {
             background-color: #8B4513;
         }
-        .work-item {
-            transition: opacity 0.3s ease;
-        }
-        .work-item.hidden {
-            display: none;
-        }
     </style>
     <script>
-        // Prevent form resubmission warning
         if (window.history.replaceState) {
             window.history.replaceState(null, null, window.location.href);
         }
 
-        function filterWorks(filter) {
+        function debounce(func, wait) {
+            let timeout;
+            return function(...args) {
+                clearTimeout(timeout);
+                timeout = setTimeout(() => func.apply(this, args), wait);
+            };
+        }
+
+        function filterWorks(filter, searchTerm = '') {
             const works = document.querySelectorAll('.work-item');
             const filterButtons = document.querySelectorAll('.filter-button');
+            searchTerm = searchTerm.toLowerCase();
             
-            // Update active button state
             filterButtons.forEach(button => {
-                button.classList.remove('active');
-                if(button.dataset.filter === filter) {
-                    button.classList.add('active');
-                }
+                button.classList.toggle('active', button.dataset.filter === filter);
             });
 
             works.forEach(work => {
                 const isPopular = work.dataset.popular === 'true';
                 const isRecommended = work.dataset.recommended === 'true';
+                const title = work.querySelector('.work-title').textContent.toLowerCase();
+                const matchesSearch = searchTerm === '' || title.includes(searchTerm);
                 
-                switch(filter) {
-                    case 'popular':
-                        work.classList.toggle('hidden', !isPopular);
-                        break;
-                    case 'recommended':
-                        work.classList.toggle('hidden', !isRecommended);
-                        break;
-                    default:
-                        work.classList.remove('hidden');
+                let shouldShow = true;
+
+                if (filter === 'popular') shouldShow = isPopular;
+                if (filter === 'recommended') shouldShow = isRecommended;
+
+                shouldShow = shouldShow && matchesSearch;
+                work.classList.toggle('hidden', !shouldShow);
+
+                const titleElement = work.querySelector('.work-title');
+                if (searchTerm && shouldShow) {
+                    const regex = new RegExp(`(${searchTerm})`, 'gi');
+                    titleElement.innerHTML = titleElement.textContent.replace(
+                        regex, 
+                        '<span class="highlight">$1</span>'
+                    );
+                } else {
+                    titleElement.innerHTML = titleElement.textContent;
                 }
             });
         }
+
+        const debouncedSearch = debounce((searchTerm) => {
+            const activeFilter = document.querySelector('.filter-button.active').dataset.filter;
+            filterWorks(activeFilter, searchTerm);
+        }, 200);
     </script>
 </head>
 <body>
@@ -132,6 +178,16 @@
     <p>Thank you for using mySTRO. Here's your selected composer's best stuff!</p>
 
     <h2>Results for Genre: {{ genre }}</h2>
+
+    <div class="search-box">
+        <span>Search:</span>
+        <input 
+            type="text" 
+            class="search-input" 
+            placeholder="Search by title..." 
+            oninput="debouncedSearch(this.value)"
+        >
+    </div>
 
     <div class="filters">
         <span>Filter by:</span>
@@ -147,7 +203,7 @@
                     data-popular="{{ work['popular']|lower }}"
                     data-recommended="{{ work['recommended']|lower }}">
                     <div class="work-info">
-                        <strong>{{ work['title'] }}</strong>
+                        <strong class="work-title">{{ work['title'] }}</strong>
                         {% if work.get('subtitle') %}
                             <em>({{ work['subtitle'] }})</em>
                         {% endif %}
