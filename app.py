@@ -80,12 +80,20 @@ def library():
 def search():
     selected_composer_id = request.form.get("composer_id")
     name = request.form.get("name")
-    selected_genre = request.form.get("genre")
+    selected_genres = request.form.getlist("genres") if request.form.getlist("genres") else [request.form.get("genre")]
 
     if not selected_composer_id:
         return "No composer selected. Please try again."
-    if not selected_genre:
-        return "No genre selected. Please try again."
+    if not selected_genres:
+        return "No genres selected. Please try again."
+
+    # Get composer name
+    composer_url = f"https://api.openopus.org/composer/list/ids/{selected_composer_id}.json"
+    composer_response = requests.get(composer_url)
+    composer_name = "Unknown Composer"
+    if composer_response.status_code == 200:
+        composer_data = composer_response.json()
+        composer_name = composer_data.get("composers", [{}])[0].get("complete_name", "Unknown Composer")
 
     works_url = f"https://api.openopus.org/work/list/composer/{selected_composer_id}/genre/all.json"
     response = requests.get(works_url)
@@ -96,26 +104,26 @@ def search():
         all_works = data.get("works", [])
         works = [
             {
-                "title": work.get("title"),
-                "genre": work.get("genre"),
-                "subtitle": work.get("subtitle"),
-                "popular": work.get("popular") == "1",  # Convert string "1" to True
-                "recommended": work.get("recommended") == "1"  # Convert string "1" to True
+                "title": work.get("title", ""),
+                "genre": work.get("genre", ""),
+                "subtitle": work.get("subtitle", ""),
+                "popular": work.get("popular") == "1",
+                "recommended": work.get("recommended") == "1",
             }
             for work in all_works
-            if work.get("genre") == selected_genre
+            if work.get("genre") in selected_genres
         ]
     else:
-        return f"Failed to fetch works for composer ID {selected_composer_id}. Status Code: {response.status_code}"
+        return f"Failed to fetch works. Status Code: {response.status_code}"
 
     return render_template(
         "results.html",
         composer_id=selected_composer_id,
-        genre=selected_genre,
+        composer_name=composer_name,
+        genres=selected_genres,
         name=name,
         works=works
     )
-
 
 if __name__ == "__main__":
    app.run(host="0.0.0.0", port=8000)

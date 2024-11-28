@@ -37,13 +37,13 @@
             color: white;
         }
         .search-input {
+            flex-grow: 1;
+            max-width: 300px;
             padding: 8px 16px;
             border: 2px solid #D2691E;
             border-radius: 20px;
-            width: 300px;
             font-size: 1em;
             outline: none;
-            transition: all 0.2s ease;
         }
         .search-input:focus {
             box-shadow: 0 0 5px rgba(210, 105, 30, 0.3);
@@ -52,7 +52,7 @@
             list-style-type: none;
             padding: 0;
         }
-        li {
+        li.work-item {
             background-color: #FFDAB9;
             margin: 10px 0;
             padding: 15px;
@@ -69,6 +69,7 @@
             display: flex;
             gap: 10px;
             margin-left: 20px;
+            align-items: center;
         }
         .badge {
             padding: 5px 10px;
@@ -78,27 +79,14 @@
             color: white;
             white-space: nowrap;
         }
+        .genre {
+            background-color: #8B4513;
+        }
         .popular {
-            background-color: #D2691E;  /* Orange for popular */
+            background-color: #D2691E;
         }
         .recommended {
-            background-color: #228B22;  /* Green for recommended */
-        }
-        /* Refined animations */
-        .work-item {
-            transition: all 0.2s ease-out;
-            opacity: 1;
-            transform: translateY(0);
-            max-height: 100px;
-            margin: 10px 0;
-        }
-        .work-item.hidden {
-            opacity: 0;
-            transform: translateY(-10px);
-            max-height: 0;
-            margin: 0;
-            padding: 0;
-            pointer-events: none;
+            background-color: #228B22;
         }
         .highlight {
             background-color: rgba(210, 105, 30, 0.2);
@@ -134,7 +122,7 @@
         function filterWorks(filter, searchTerm = '') {
             const works = document.querySelectorAll('.work-item');
             const filterButtons = document.querySelectorAll('.filter-button');
-            searchTerm = searchTerm.toLowerCase();
+            searchTerm = searchTerm ? searchTerm.toLowerCase() : '';
             
             filterButtons.forEach(button => {
                 button.classList.toggle('active', button.dataset.filter === filter);
@@ -143,22 +131,24 @@
             works.forEach(work => {
                 const isPopular = work.dataset.popular === 'true';
                 const isRecommended = work.dataset.recommended === 'true';
-                const title = work.querySelector('.work-title').textContent.toLowerCase();
-                const matchesSearch = searchTerm === '' || title.includes(searchTerm);
+                const titleElement = work.querySelector('.work-title');
+                const title = titleElement.textContent.toLowerCase();
                 
                 let shouldShow = true;
 
                 if (filter === 'popular') shouldShow = isPopular;
                 if (filter === 'recommended') shouldShow = isRecommended;
 
-                shouldShow = shouldShow && matchesSearch;
-                work.classList.toggle('hidden', !shouldShow);
+                if (searchTerm) {
+                    shouldShow = shouldShow && title.includes(searchTerm);
+                }
 
-                const titleElement = work.querySelector('.work-title');
+                work.style.display = shouldShow ? 'flex' : 'none';
+
                 if (searchTerm && shouldShow) {
                     const regex = new RegExp(`(${searchTerm})`, 'gi');
                     titleElement.innerHTML = titleElement.textContent.replace(
-                        regex, 
+                        regex,
                         '<span class="highlight">$1</span>'
                     );
                 } else {
@@ -171,13 +161,17 @@
             const activeFilter = document.querySelector('.filter-button.active').dataset.filter;
             filterWorks(activeFilter, searchTerm);
         }, 200);
+
+        document.addEventListener('DOMContentLoaded', function() {
+            filterWorks('all', '');
+        });
     </script>
 </head>
 <body>
     <h1>Welcome, {{ name }}!</h1>
-    <p>Thank you for using mySTRO. Here's your selected composer's best stuff!</p>
+    <p>Thank you for using mySTRO. Here's {{ composer_name }}'s best stuff!</p>
 
-    <h2>Results for Genre: {{ genre }}</h2>
+    <h2>Results</h2>
 
     <div class="search-box">
         <span>Search:</span>
@@ -200,16 +194,17 @@
         {% if works %}
             {% for work in works %}
                 <li class="work-item" 
-                    data-popular="{{ work['popular']|lower }}"
-                    data-recommended="{{ work['recommended']|lower }}">
+                    data-popular="{{ 'true' if work['popular'] else 'false' }}"
+                    data-recommended="{{ 'true' if work['recommended'] else 'false' }}"
+                    data-genre="{{ work['genre'] }}">
                     <div class="work-info">
                         <strong class="work-title">{{ work['title'] }}</strong>
                         {% if work.get('subtitle') %}
                             <em>({{ work['subtitle'] }})</em>
                         {% endif %}
-                        - {{ work['genre'] }}
                     </div>
                     <div class="badges">
+                        <span class="badge genre">{{ work['genre'] }}</span>
                         {% if work['popular'] %}
                             <span class="badge popular">Popular</span>
                         {% endif %}
@@ -220,7 +215,7 @@
                 </li>
             {% endfor %}
         {% else %}
-            <li>No works found for the selected composer and genre.</li>
+            <li>No works found for the selected genres.</li>
         {% endif %}
     </ul>
     
