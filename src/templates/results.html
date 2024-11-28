@@ -14,6 +14,28 @@
         h1, h2 {
             color: #D2691E;
         }
+        .filters {
+            margin: 20px 0;
+            padding: 15px;
+            background-color: #FFDAB9;
+            border-radius: 5px;
+            display: flex;
+            gap: 20px;
+            align-items: center;
+        }
+        .filter-button {
+            padding: 8px 16px;
+            border: 2px solid #D2691E;
+            border-radius: 20px;
+            background-color: white;
+            color: #D2691E;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .filter-button.active {
+            background-color: #D2691E;
+            color: white;
+        }
         ul {
             list-style-type: none;
             padding: 0;
@@ -34,6 +56,7 @@
         .badges {
             display: flex;
             gap: 10px;
+            margin-left: 20px;
         }
         .badge {
             padding: 5px 10px;
@@ -41,6 +64,7 @@
             font-size: 0.8em;
             font-weight: bold;
             color: white;
+            white-space: nowrap;
         }
         .popular {
             background-color: #D2691E;
@@ -48,7 +72,7 @@
         .recommended {
             background-color: #228B22;
         }
-        a {
+        a.back-button {
             display: inline-block;
             background-color: #D2691E;
             color: white;
@@ -57,10 +81,51 @@
             border-radius: 5px;
             margin-top: 20px;
         }
-        a:hover {
+        a.back-button:hover {
             background-color: #8B4513;
         }
+        .work-item {
+            transition: opacity 0.3s ease;
+        }
+        .work-item.hidden {
+            display: none;
+        }
     </style>
+    <script>
+        // Prevent form resubmission warning
+        if (window.history.replaceState) {
+            window.history.replaceState(null, null, window.location.href);
+        }
+
+        function filterWorks(filter) {
+            const works = document.querySelectorAll('.work-item');
+            const filterButtons = document.querySelectorAll('.filter-button');
+            
+            // Update active button state
+            filterButtons.forEach(button => {
+                button.classList.remove('active');
+                if(button.dataset.filter === filter) {
+                    button.classList.add('active');
+                }
+            });
+
+            works.forEach(work => {
+                const isPopular = work.dataset.popular === 'true';
+                const isRecommended = work.dataset.recommended === 'true';
+                
+                switch(filter) {
+                    case 'popular':
+                        work.classList.toggle('hidden', !isPopular);
+                        break;
+                    case 'recommended':
+                        work.classList.toggle('hidden', !isRecommended);
+                        break;
+                    default:
+                        work.classList.remove('hidden');
+                }
+            });
+        }
+    </script>
 </head>
 <body>
     <h1>Welcome, {{ name }}!</h1>
@@ -68,13 +133,22 @@
 
     <h2>Results for Genre: {{ genre }}</h2>
 
+    <div class="filters">
+        <span>Filter by:</span>
+        <button class="filter-button active" data-filter="all" onclick="filterWorks('all')">All Works</button>
+        <button class="filter-button" data-filter="popular" onclick="filterWorks('popular')">Popular Only</button>
+        <button class="filter-button" data-filter="recommended" onclick="filterWorks('recommended')">Recommended Only</button>
+    </div>
+
     <ul>
         {% if works %}
             {% for work in works %}
-                <li>
+                <li class="work-item" 
+                    data-popular="{{ work['popular']|lower }}"
+                    data-recommended="{{ work['recommended']|lower }}">
                     <div class="work-info">
                         <strong>{{ work['title'] }}</strong>
-                        {% if work['subtitle'] %}
+                        {% if work.get('subtitle') %}
                             <em>({{ work['subtitle'] }})</em>
                         {% endif %}
                         - {{ work['genre'] }}
@@ -94,6 +168,6 @@
         {% endif %}
     </ul>
     
-    <a href="/form">Go back to the form</a>
+    <a href="/form" class="back-button">Go back to the form</a>
 </body>
 </html>
