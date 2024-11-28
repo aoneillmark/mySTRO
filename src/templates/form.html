@@ -31,7 +31,7 @@
                         <option value="{{ composer['id'] }}" class="py-1">{{ composer['name'] }} ({{ composer['epoch'] }})</option>
                     {% endfor %}
                 </select>
-                <p class="text-sm mt-1" style="color: #666;">Hold Ctrl/Cmd to select multiple composers</p>
+                <p class="text-sm mt-1" style="color: #666;">Hold Ctrl/Cmd to select multiple non-consecutive composers</p>
             </div>
 
             <div class="mb-6">
@@ -46,7 +46,7 @@
                         <option value="{{ genre }}" class="py-1">{{ genre }}</option>
                     {% endfor %}
                 </select>
-                <p class="text-sm mt-1" style="color: #666;">Hold Ctrl/Cmd to select multiple genres</p>
+                <p class="text-sm mt-1" style="color: #666;">Hold Ctrl/Cmd to select multiple non-consecutive genres</p>
             </div>
 
             <button type="submit"
@@ -57,32 +57,55 @@
         </form>
     </main>
 
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const selects = document.querySelectorAll('select[multiple]');
+        
+        selects.forEach(select => {
+            select.addEventListener('mousedown', function(e) {
+                e.preventDefault();
+                
+                const option = e.target;
+                const isCtrlPressed = e.ctrlKey || e.metaKey;
+                
+                if (isCtrlPressed) {
+                    // Toggle selection when Ctrl/Cmd is pressed
+                    option.selected = !option.selected;
+                } else {
+                    // Default behavior: clear previous selection and select current option
+                    Array.from(this.options).forEach(opt => opt.selected = false);
+                    option.selected = true;
+                }
+                
+                // Trigger change event if needed
+                this.dispatchEvent(new Event('change'));
+            });
+
+            // Add keyboard support
+            select.addEventListener('keydown', function(e) {
+                if ((e.ctrlKey || e.metaKey) && e.key === ' ') {
+                    const focusedOption = this.options[this.selectedIndex];
+                    focusedOption.selected = !focusedOption.selected;
+                    e.preventDefault();
+                }
+            });
+        });
+    });
+    </script>
+
     <style>
-        /* Custom styles for multi-selects */
+        /* Previous CSS remains the same */
         select[multiple] {
-            overflow-y: auto;
-            -webkit-appearance: none;
-            -moz-appearance: none;
-            appearance: none;
+            user-select: none;
         }
 
-        select[multiple] option {
-            padding: 8px 12px;
-            margin: 2px 0;
-            border-radius: 4px;
-            transition: all 0.2s ease;
-        }
-
-        select[multiple] option:checked {
+        select[multiple] option:active,
+        select[multiple] option:focus {
             background-color: #FFDAB9 !important;
             color: #8B4513;
         }
 
-        select[multiple] option:hover {
-            background-color: #FFF5E6;
-        }
-
-        /* Scrollbar styling */
+        /* Existing scrollbar and other styles from previous version */
         select[multiple]::-webkit-scrollbar {
             width: 8px;
         }
