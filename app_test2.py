@@ -21,6 +21,7 @@ def test_home_route(client):
         # Adjust test to reflect epoch data in the dropdown
         assert b'<option value="1">Mozart (Classical)</option>' in response.data
 
+
 def test_composer_api_failure(client):
     with requests_mock.Mocker() as mock:
         composers_url = "https://api.openopus.org/composer/list/name/all.json"
@@ -41,8 +42,13 @@ def test_root_route(client):
 
 def test_search_route(client):
     with requests_mock.Mocker() as mock:
+        # Mock the 'works' API endpoint
         works_url = "https://api.openopus.org/work/list/composer/1/genre/all.json"
         mock.get(works_url, json={"works": [{"id": 1, "title": "Symphony No. 1", "genre": "Orchestral"}]})
+
+        # Mock the 'composer' API endpoint
+        composer_url = "https://api.openopus.org/composer/list/ids/1.json"
+        mock.get(composer_url, json={"composers": [{"id": 1, "name": "Mozart"}]})
 
         form_data = {"composer_id": "1", "name": "Mozart", "genre": "Orchestral"}
         response = client.post("/search", data=form_data)
@@ -54,7 +60,7 @@ def test_search_genre_validation(client):
     form_data = {"composer_id": "1", "name": "Mozart"}  # Missing genre
     response = client.post("/search", data=form_data)
     assert response.status_code == 200
-    assert b"No genre selected" in response.data
+    assert b"No genre selected" in response.data  # Ensure this matches the actual error message
 
 
 def test_search_composer_validation(client):
