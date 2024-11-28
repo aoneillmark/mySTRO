@@ -65,7 +65,7 @@
 
         .work-item {
             display: grid;
-            grid-template-columns: 200px 1fr auto auto;
+            grid-template-columns: 200px 1fr auto auto auto;
             gap: 20px;
             background-color: #FFDAB9;
             margin: 10px 0;
@@ -160,11 +160,10 @@
             background-color: #8B4513;
         }
 
-        .add-button {
+        .action-button {
             width: 30px;
             height: 30px;
             border-radius: 50%;
-            background-color: #D2691E;
             color: white;
             border: none;
             font-size: 20px;
@@ -174,6 +173,20 @@
             justify-content: center;
             margin-left: 10px;
             transition: all 0.2s ease;
+            text-decoration: none;
+        }
+
+        .youtube-button {
+            background-color: #FF0000;
+        }
+
+        .youtube-button:hover {
+            background-color: #CC0000;
+            transform: scale(1.1);
+        }
+
+        .add-button {
+            background-color: #D2691E;
         }
 
         .add-button:hover {
@@ -313,7 +326,11 @@
                             <span class="badge recommended">Recommended</span>
                         {% endif %}
                     </div>
-                    <button class="add-button" title="Add to Library">+</button>
+                    <a href="https://www.youtube.com/results?search_query={{ work['composer_name'] }}+{{ work['title'] }}{% if work.get('subtitle') %}+{{ work['subtitle'] }}{% endif %}" 
+                       class="action-button youtube-button" 
+                       target="_blank" 
+                       title="Search on YouTube">▶</a>
+                    <button class="action-button add-button" title="Add to Library">+</button>
                 </li>
             {% endfor %}
         {% else %}
