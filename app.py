@@ -80,7 +80,10 @@ def library():
 def search():
     selected_composer_ids = request.form.getlist("composer_id")
     name = request.form.get("name")
+
     selected_genres = request.form.getlist("genres")
+    print(f"Selected genres: {selected_genres}")  # Debugging line
+
 
     if not selected_composer_ids:
         return "No composer selected. Please try again."

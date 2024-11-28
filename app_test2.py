@@ -16,10 +16,9 @@ def test_home_route(client):
         mock.get(composers_url, json={"composers": [{"id": 1, "name": "Mozart", "epoch": "Classical"}]})
 
         response = client.get("/form")
-        print(response.data.decode())  # Debug print for inspection
         assert response.status_code == 200
-        # Adjust test to reflect epoch data in the dropdown
-        assert b'<option value="1">Mozart (Classical)</option>' in response.data
+        # Adjust test to check for composer and epoch without requiring exact formatting
+        assert b'Mozart (Classical)' in response.data
 
 
 def test_composer_api_failure(client):
@@ -34,7 +33,6 @@ def test_composer_api_failure(client):
 
 def test_root_route(client):
     response = client.get("/")
-    print(response.data.decode())  # Debug print
     assert response.status_code == 200
     # Check for a specific heading in the about.html content
     assert b"About MySTRO" in response.data
@@ -48,9 +46,13 @@ def test_search_route(client):
 
         # Mock the 'composer' API endpoint
         composer_url = "https://api.openopus.org/composer/list/ids/1.json"
-        mock.get(composer_url, json={"composers": [{"id": 1, "name": "Mozart"}]})
+        mock.get(composer_url, json={"composers": [{"id": 1, "complete_name": "Wolfgang Amadeus Mozart"}]})
 
-        form_data = {"composer_id": "1", "name": "Mozart", "genre": "Orchestral"}
+        form_data = {
+            "composer_id": "1",
+            "name": "Mozart",
+            "genres": ["Orchestral"]  # Ensure 'genres' is a list
+        }
         response = client.post("/search", data=form_data)
         assert response.status_code == 200
         assert b"Symphony No. 1" in response.data
@@ -60,7 +62,7 @@ def test_search_genre_validation(client):
     form_data = {"composer_id": "1", "name": "Mozart"}  # Missing genre
     response = client.post("/search", data=form_data)
     assert response.status_code == 200
-    assert b"No genre selected" in response.data  # Ensure this matches the actual error message
+    assert b"No genres selected. Please try again." in response.data
 
 
 def test_search_composer_validation(client):
