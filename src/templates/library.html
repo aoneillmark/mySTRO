@@ -1,32 +1,239 @@
-<!-- This is the library page -->
- 
 {% extends "base.html" %}
 
+{% block title %}My Library{% endblock %}
+
 {% block content %}
-<div class="bg-gray-100 p-10">
-    <h1 class="text-3xl font-bold text-center text-pumpkin">My Library</h1>
-    <div class="max-w-lg mx-auto mt-10">
-        {% if pieces %}
-            <ul class="bg-linen shadow-lg rounded-lg overflow-hidden">
-                {% for piece in pieces %}
-                <li class="border-b border-gray-200 px-6 py-4">
-                    <h2 class="text-xl font-semibold text-dark-purple">{{ piece.title }}</h2>
-                    <p class="text-battleship-gray">
-                        <strong>Composer:</strong> {{ piece.composer }}
-                    </p>
-                    <p class="text-battleship-gray">
-                        <strong>Opus Number:</strong> {{ piece.opus_number or "N/A" }}
-                    </p>
-                    <a href="{{ url_for('library.single_piece', piece_id=piece.id) }}"
-                       class="text-penn-red hover:text-dark-purple underline">
-                        View Details
-                    </a>
-                </li>
-                {% endfor %}
-            </ul>
-        {% else %}
-            <p class="text-center text-battleship-gray mt-10">No pieces in the library yet.</p>
-        {% endif %}
-    </div>
+<div class="bg-linen p-10">
+   <h1 class="text-3xl font-bold text-pumpkin">My Library</h1>
+   <p class="text-battleship-gray mt-4">Here are all your saved pieces.</p>
+
+   <div class="search-box">
+       <span>Search:</span>
+       <input
+           type="text"
+           class="search-input"
+           placeholder="Search by title..."
+           oninput="debouncedSearch(this.value)"
+       >
+   </div>
+
+   <ul>
+       {% if pieces %}
+           {% for piece in pieces %}
+               <li class="work-item"
+                   data-title="{{ piece.title }}"
+                   data-composer="{{ piece.composer }}">
+                   <div class="composer-name">{{ piece.composer }}</div>
+                   <div class="work-info">
+                       <strong class="work-title">{{ piece.title }}</strong>
+                       {% if piece.opus_number %}
+                           <em>({{ piece.opus_number }})</em>
+                       {% endif %}
+                   </div>
+                   <div class="badges">
+                       {% if piece.opus_number %}
+                           <span class="badge opus">Opus {{ piece.opus_number }}</span>
+                       {% endif %}
+                   </div>
+                   <div class="actions">
+                       <a href="https://www.youtube.com/results?search_query={{ piece.composer }}+{{ piece.title }}"
+                          class="action-button"
+                          target="_blank"
+                          title="Search on YouTube">▶</a>
+                       <a href="{{ url_for('library.single_piece', piece_id=piece.id) }}"
+                          class="action-button"
+                          title="View Details">👁</a>
+                       <button onclick="deletePiece({{ piece.id }})"
+                           class="add-button"
+                           title="Delete">−</button>
+                   </div>
+               </li>
+           {% endfor %}
+       {% else %}
+           <li class="no-results">No pieces in the library yet.</li>
+       {% endif %}
+   </ul>
 </div>
-{% endblock content %}
+
+<script>
+   function debounce(func, wait) {
+       let timeout;
+       return function(...args) {
+           clearTimeout(timeout);
+           timeout = setTimeout(() => func.apply(this, args), wait);
+       };
+   }
+
+   function searchLibrary(searchTerm) {
+       const works = document.querySelectorAll('.work-item');
+       searchTerm = searchTerm.toLowerCase();
+
+       works.forEach(work => {
+           const title = work.dataset.title.toLowerCase();
+           const composer = work.dataset.composer.toLowerCase();
+           const titleElement = work.querySelector('.work-title');
+
+           const shouldShow = title.includes(searchTerm) || composer.includes(searchTerm);
+           work.style.display = shouldShow ? 'grid' : 'none';
+
+           if (searchTerm && shouldShow) {
+               const regex = new RegExp(`(${searchTerm})`, 'gi');
+               titleElement.innerHTML = titleElement.textContent.replace(
+                   regex,
+                   '<span class="highlight">$1</span>'
+               );
+           } else {
+               titleElement.innerHTML = titleElement.textContent;
+           }
+       });
+   }
+
+   function deletePiece(pieceId) {
+       if (confirm('Are you sure you want to delete this piece?')) {
+           fetch(`/library/delete/${pieceId}`, {
+               method: 'POST',
+               headers: {
+                   'Content-Type': 'application/json'
+               }
+           })
+           .then(response => {
+               if (response.ok) {
+                   window.location.reload();
+               } else {
+                   alert('Error deleting piece');
+               }
+           })
+           .catch(error => {
+               console.error('Error:', error);
+               alert('Error deleting piece');
+           });
+       }
+   }
+
+   const debouncedSearch = debounce(searchLibrary, 200);
+</script>
+
+<style>
+    .bg-linen {
+        background-color: #FAF0E6;
+    }
+
+    .text-pumpkin {
+        color: #D2691E;
+    }
+
+    .text-battleship-gray {
+        color: #6C757D;
+    }
+
+    .search-box {
+        margin: 20px 0;
+        padding: 10px;
+        background-color: white;
+        border: 1px solid #D2691E;
+        border-radius: 4px;
+    }
+
+    .search-input {
+        margin-left: 10px;
+        padding: 5px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        width: 200px;
+    }
+
+    .work-item {
+        display: grid;
+        grid-template-columns: 200px 1fr auto auto;
+        gap: 20px;
+        align-items: center;
+        padding: 15px;
+        margin: 10px 0;
+        background-color: white;
+        border: 1px solid #D2691E;
+        border-radius: 4px;
+    }
+
+    .composer-name {
+        font-weight: 500;
+        color: #666;
+    }
+
+    .work-info {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .work-title {
+        font-size: 1.1em;
+        color: #333;
+    }
+
+    .badges {
+        display: flex;
+        gap: 10px;
+    }
+
+    .badge {
+        padding: 4px 8px;
+        border-radius: 4px;
+        font-size: 0.9em;
+        background-color: #f0f0f0;
+        color: #666;
+    }
+
+    .actions {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .action-button {
+        border: none;
+        background: none;
+        font-size: 20px;
+        color: #8B4513;
+        cursor: pointer;
+        text-decoration: none;
+    }
+
+    .action-button:hover {
+        color: #D2691E;
+    }
+
+    .add-button {
+        width: 24px;
+        height: 24px;
+        border: none;
+        border-radius: 50%;
+        background: #8B4513;
+        color: white;
+        font-size: 20px;
+        line-height: 1;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding-bottom: 4px;
+    }
+
+    .add-button:hover {
+        background: #D2691E;
+    }
+
+    .highlight {
+        background-color: #FFDAB9;
+        padding: 2px;
+        border-radius: 2px;
+    }
+
+    .no-results {
+        text-align: center;
+        padding: 20px;
+        color: #666;
+        background-color: white;
+        border: 1px solid #D2691E;
+        border-radius: 4px;
+    }
+</style>
+{% endblock %}

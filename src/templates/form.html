@@ -3,26 +3,28 @@
 {% block title %}Select a Composer{% endblock %}
 
 {% block content %}
-<body class="bg-linen p-10">
+<div class="bg-linen p-10">
     <main class="mt-10 mx-auto" style="max-width: 800px;">
-        <h2 class="text-3xl text-center mb-8">Welcome to MySTRO</h2>
+        <h2 class="text-3xl text-center mb-8 text-dark-purple">Welcome to MySTRO</h2>
 
         <form action="/search" method="POST" class="mx-auto">
+            <!-- Name Field -->
             <div class="mb-6">
                 <label for="namefield" class="block text-lg mb-2" style="color: #333;">Name:</label>
-                <input type="text" 
-                       id="namefield" 
-                       name="name" 
+                <input type="text"
+                       id="namefield"
+                       name="name"
                        placeholder="Enter your name"
                        class="w-full p-2 rounded"
                        style="border: 1px solid #D2691E; background-color: white;"
                        required>
             </div>
 
+            <!-- Composer Selection -->
             <div class="mb-6">
                 <label for="composer_id" class="block text-lg mb-2" style="color: #333;">Choose Composers:</label>
-                <select id="composer_id" 
-                        name="composer_id" 
+                <select id="composer_id"
+                        name="composer_id"
                         multiple
                         class="w-full p-2 rounded"
                         style="border: 1px solid #D2691E; height: 200px; background-color: white;"
@@ -34,10 +36,11 @@
                 <p class="text-sm mt-1" style="color: #666;">Hold Ctrl/Cmd to select multiple non-consecutive composers</p>
             </div>
 
+            <!-- Genre Selection -->
             <div class="mb-6">
                 <label for="genres" class="block text-lg mb-2" style="color: #333;">Choose Genres:</label>
-                <select id="genres" 
-                        name="genres" 
+                <select id="genres"
+                        name="genres"
                         multiple
                         class="w-full p-2 rounded"
                         style="border: 1px solid #D2691E; height: 200px; background-color: white;"
@@ -49,6 +52,7 @@
                 <p class="text-sm mt-1" style="color: #666;">Hold Ctrl/Cmd to select multiple non-consecutive genres</p>
             </div>
 
+            <!-- Submit Button -->
             <button type="submit"
                 class="w-full py-3 px-4 rounded text-white font-bold"
                 style="background-color: #8B4513; transition: background-color 0.2s ease;">
@@ -56,32 +60,29 @@
             </button>
         </form>
     </main>
+</div>
 
-    <script>
+<script>
     document.addEventListener('DOMContentLoaded', function() {
         const selects = document.querySelectorAll('select[multiple]');
-        
+
         selects.forEach(select => {
             select.addEventListener('mousedown', function(e) {
                 e.preventDefault();
-                
                 const option = e.target;
                 const isCtrlPressed = e.ctrlKey || e.metaKey;
-                
+
                 if (isCtrlPressed) {
                     // Toggle selection when Ctrl/Cmd is pressed
                     option.selected = !option.selected;
                 } else {
-                    // Default behavior: clear previous selection and select current option
+                    // Clear previous selections and select current
                     Array.from(this.options).forEach(opt => opt.selected = false);
                     option.selected = true;
                 }
-                
-                // Trigger change event if needed
                 this.dispatchEvent(new Event('change'));
             });
 
-            // Add keyboard support
             select.addEventListener('keydown', function(e) {
                 if ((e.ctrlKey || e.metaKey) && e.key === ' ') {
                     const focusedOption = this.options[this.selectedIndex];
@@ -91,51 +92,39 @@
             });
         });
     });
-    </script>
+</script>
 
-    <style>
-        /* Previous CSS remains the same */
-        select[multiple] {
-            user-select: none;
-        }
-
-        select[multiple] option:active,
-        select[multiple] option:focus {
-            background-color: #FFDAB9 !important;
-            color: #8B4513;
-        }
-
-        /* Existing scrollbar and other styles from previous version */
-        select[multiple]::-webkit-scrollbar {
-            width: 8px;
-        }
-
-        select[multiple]::-webkit-scrollbar-track {
-            background: #FFF5E6;
-            border-radius: 4px;
-        }
-
-        select[multiple]::-webkit-scrollbar-thumb {
-            background: #D2691E;
-            border-radius: 4px;
-        }
-
-        select[multiple]::-webkit-scrollbar-thumb:hover {
-            background: #8B4513;
-        }
-
-        /* Form element focus states */
-        input:focus, select:focus {
-            outline: none;
-            border-color: #8B4513;
-            box-shadow: 0 0 0 2px rgba(139, 69, 19, 0.2);
-        }
-
-        /* Submit button hover state */
-        button[type="submit"]:hover {
-            background-color: #D2691E;
-            cursor: pointer;
-        }
-    </style>
-</body>
+<style>
+    select[multiple] {
+        user-select: none;
+    }
+    select[multiple] option:active,
+    select[multiple] option:focus {
+        background-color: #FFDAB9 !important;
+        color: #8B4513;
+    }
+    select[multiple]::-webkit-scrollbar {
+        width: 8px;
+    }
+    select[multiple]::-webkit-scrollbar-track {
+        background: #FFF5E6;
+        border-radius: 4px;
+    }
+    select[multiple]::-webkit-scrollbar-thumb {
+        background: #D2691E;
+        border-radius: 4px;
+    }
+    select[multiple]::-webkit-scrollbar-thumb:hover {
+        background: #8B4513;
+    }
+    input:focus, select:focus {
+        outline: none;
+        border-color: #8B4513;
+        box-shadow: 0 0 0 2px rgba(139, 69, 19, 0.2);
+    }
+    button[type="submit"]:hover {
+        background-color: #D2691E;
+        cursor: pointer;
+    }
+</style>
 {% endblock %}
