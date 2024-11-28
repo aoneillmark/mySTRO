@@ -31,3 +31,10 @@ flask run        # Spin the server
 
 
 You can now browse to http://localhost:5000 and see the app live.
+
+<!-- NB!!!! FOR FLASK DEVELOPMENT -->
+run:
+flask drop_all
+flask create_all
+flask populate_all
+this is necessary for doing database stuff at all.
