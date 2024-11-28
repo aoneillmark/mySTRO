@@ -65,7 +65,7 @@
 
         .work-item {
             display: grid;
-            grid-template-columns: 200px 1fr auto;
+            grid-template-columns: 200px 1fr auto auto;
             gap: 20px;
             background-color: #FFDAB9;
             margin: 10px 0;
@@ -158,6 +158,27 @@
 
         a.back-button:hover {
             background-color: #8B4513;
+        }
+
+        .add-button {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background-color: #D2691E;
+            color: white;
+            border: none;
+            font-size: 20px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-left: 10px;
+            transition: all 0.2s ease;
+        }
+
+        .add-button:hover {
+            background-color: #8B4513;
+            transform: scale(1.1);
         }
     </style>
     <script>
@@ -292,6 +313,7 @@
                             <span class="badge recommended">Recommended</span>
                         {% endif %}
                     </div>
+                    <button class="add-button" title="Add to Library">+</button>
                 </li>
             {% endfor %}
         {% else %}
