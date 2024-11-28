@@ -36,82 +36,111 @@ def get_music_pieces():
 
 # # -------------------------------------------------------------------------------
 
+with app.app_context():
+    app.cli.add_command(create_all)
+    app.cli.add_command(drop_all)
+    app.cli.add_command(populate)
+# -------------------------------------------------------------------------------
+
 
 @app.route("/form", methods=["GET", "POST"])
 def home():
-    # Load the list of composers
-    composers_url = "https://api.openopus.org/composer/list/name/all.json"
-    response = requests.get(composers_url)
+   composers_url = "https://api.openopus.org/composer/list/name/all.json"
+   response = requests.get(composers_url)
 
+   composers = []
+   if response.status_code == 200:
+       composers_data = response.json()
+       composers = composers_data.get("composers", [])
+   else:
+       return f"Failed to fetch composers. Status Code: {response.status_code}"
 
-    composers = []
-    if response.status_code == 200:
-        composers_data = response.json()
-        composers = composers_data.get("composers", [])
-    else:
-        return f"Failed to fetch composers. Status Code: {response.status_code}"
-
-    # Updated genres
-    genres = [
-        "Keyboard",
-        "Orchestral",
-        "Chamber",
-        "Stage",
-        "Choral",
-        "Opera",
-        "Vocal"
-    ]
-    # Render the form with the list of composers and genres
-    return render_template("form.html", composers=composers, genres=genres)
+   genres = [
+       "Keyboard",
+       "Orchestral", 
+       "Chamber",
+       "Stage",
+       "Choral",
+       "Opera",
+       "Vocal"
+   ]
+   return render_template("form.html", composers=composers, genres=genres)
 
 @app.route("/")
 def hello_world():
-    return render_template("about.html")
-
+   return render_template("about.html")
 
 @app.route("/form")
 def form():
-    return render_template("form.html")
-
+   return render_template("form.html")
 
 @app.route("/library")
 def library():
-    return render_template("library.html")
+   return render_template("library.html")
+
 
 @app.route("/search", methods=["POST"])
 def search():
-    print("Form Data:", request.form)
+    selected_composer_ids = request.form.getlist("composer_id")
+    name = request.form.get("name")
 
-    # Get selected composer and genre from the form
-    selected_composer_id = request.form.get("composer_id")
-    selected_genre = request.form.get("genre")
+    selected_genres = request.form.getlist("genres")
+    print(f"Selected genres: {selected_genres}")  # Debugging line
 
-    if not selected_composer_id:
+
+    if not selected_composer_ids:
         return "No composer selected. Please try again."
-    if not selected_genre:
-        return "No genre selected. Please try again."
+    if not selected_genres:
+        return "No genres selected. Please try again."
 
-    # Fetch works from the API
-    works_url = f"https://api.openopus.org/work/list/composer/{selected_composer_id}/genre/all.json"
-    response = requests.get(works_url)
+    all_works = []
 
-    works = []
-    if response.status_code == 200:
-        data = response.json()
-        all_works = data.get("works", [])
-        # Filter works by the selected genre
-        works = [work for work in all_works if work.get("genre") == selected_genre]
-    else:
-        return f"Failed to fetch works for composer ID {selected_composer_id}. Status Code: {response.status_code}"
+    # Get works for each selected composer
+    for composer_id in selected_composer_ids:
+        # Get composer name
+        composer_url = f"https://api.openopus.org/composer/list/ids/{composer_id}.json"
+        composer_response = requests.get(composer_url)
+        composer_name = "Unknown Composer"
+        
+        if composer_response.status_code == 200:
+            composer_data = composer_response.json()
+            composer_name = composer_data.get("composers", [{}])[0].get("complete_name", "Unknown Composer")
 
-    # Render results page
+        # Get works
+        works_url = f"https://api.openopus.org/work/list/composer/{composer_id}/genre/all.json"
+        response = requests.get(works_url)
+
+        if response.status_code == 200:
+            data = response.json()
+            composer_works = data.get("works", [])
+            # Add composer information to each work
+            filtered_works = [
+                {
+                    "title": work.get("title", ""),
+                    "genre": work.get("genre", ""),
+                    "subtitle": work.get("subtitle", ""),
+                    "popular": work.get("popular") == "1",
+                    "recommended": work.get("recommended") == "1",
+                    "composer_name": composer_name,  # Add composer name to each work
+                    "composer_id": composer_id
+                }
+                for work in composer_works
+                if work.get("genre") in selected_genres
+            ]
+            all_works.extend(filtered_works)
+
+    if not all_works:
+        return "No works found for the selected composers and genres."
+
+    # Get unique composer names for filtering
+    unique_composers = sorted(list(set(work["composer_name"] for work in all_works)))
+
     return render_template(
         "results.html",
-        composer_id=selected_composer_id,
-        genre=selected_genre,
-        works=works
+        name=name,
+        works=all_works,
+        composers=unique_composers  # Pass list of unique composers for filtering
     )
-    
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=8000)
+   app.run(host="0.0.0.0", port=8000)

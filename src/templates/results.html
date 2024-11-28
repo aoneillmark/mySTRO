@@ -1,34 +1,326 @@
-<!-- This is the results page where users can add the results to their libraries, including a link
- to the library.html -->
-
- <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Results</title>
+    <style>
+        body {
+            background-color: #FDF5E6;
+            color: #8B4513;
+            font-family: Georgia, serif;
+            margin: 40px;
+        }
+        h1, h2 {
+            color: #D2691E;
+        }
+        .filters, .search-box, .composer-filters {
+            margin: 20px 0;
+            padding: 15px;
+            background-color: #FFDAB9;
+            border-radius: 5px;
+            display: flex;
+            gap: 20px;
+            align-items: center;
+        }
+
+        .search-input {
+            flex-grow: 1;
+            max-width: 500px;
+            padding: 8px 16px;
+            border: 2px solid #D2691E;
+            border-radius: 20px;
+            font-size: 1em;
+            outline: none;
+        }
+
+        .search-input:focus {
+            box-shadow: 0 0 5px rgba(210, 105, 30, 0.3);
+        }
+
+        .filter-button {
+            padding: 8px 16px;
+            border: 2px solid #D2691E;
+            border-radius: 20px;
+            background-color: white;
+            color: #D2691E;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .filter-button.active {
+            background-color: #D2691E;
+            color: white;
+        }
+
+        .filter-button.composer {
+            font-size: 0.9em;
+            white-space: nowrap;
+        }
+
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        .work-item {
+            display: grid;
+            grid-template-columns: 200px 1fr auto auto;
+            gap: 20px;
+            background-color: #FFDAB9;
+            margin: 10px 0;
+            padding: 15px;
+            border-radius: 5px;
+            box-shadow: 2px 2px 5px rgba(139, 69, 19, 0.2);
+            align-items: center;
+            transition: all 0.2s ease-out;
+        }
+
+        .composer-name {
+            color: #8B4513;
+            font-style: italic;
+            font-size: 0.95em;
+            border-right: 2px solid #D2691E;
+            padding-right: 15px;
+        }
+
+        .work-info {
+            flex-grow: 1;
+        }
+
+        .badges {
+            display: flex;
+            gap: 10px;
+            margin-left: 20px;
+            align-items: center;
+        }
+
+        .badge {
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 0.8em;
+            font-weight: bold;
+            color: white;
+            white-space: nowrap;
+        }
+
+        .badge.genre.Orchestral {
+            background-color: #2F4F4F;
+        }
+
+        .badge.genre.Chamber {
+            background-color: #556B2F;
+        }
+
+        .badge.genre.Keyboard {
+            background-color: #8B4513;
+        }
+
+        .badge.genre.Vocal {
+            background-color: #4A4A4A;
+        }
+
+        .badge.genre.Stage {
+            background-color: #4B0082;
+        }
+
+        .badge.genre.Choral {
+            background-color: #683A5E;
+        }
+
+        .badge.genre.Opera {
+            background-color: #800020;
+        }
+
+        .badge.popular {
+            background-color: #D2691E;
+        }
+
+        .badge.recommended {
+            background-color: #228B22;
+        }
+
+        .highlight {
+            background-color: rgba(210, 105, 30, 0.2);
+            padding: 0 2px;
+            border-radius: 3px;
+        }
+
+        a.back-button {
+            display: inline-block;
+            background-color: #D2691E;
+            color: white;
+            padding: 10px 20px;
+            text-decoration: none;
+            border-radius: 5px;
+            margin-top: 20px;
+        }
+
+        a.back-button:hover {
+            background-color: #8B4513;
+        }
+
+        .add-button {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background-color: #D2691E;
+            color: white;
+            border: none;
+            font-size: 20px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-left: 10px;
+            transition: all 0.2s ease;
+        }
+
+        .add-button:hover {
+            background-color: #8B4513;
+            transform: scale(1.1);
+        }
+    </style>
+    <script>
+        if (window.history.replaceState) {
+            window.history.replaceState(null, null, window.location.href);
+        }
+
+        function debounce(func, wait) {
+            let timeout;
+            return function(...args) {
+                clearTimeout(timeout);
+                timeout = setTimeout(() => func.apply(this, args), wait);
+            };
+        }
+
+        function filterWorks(filter, searchTerm = '', composerFilter = null) {
+            const works = document.querySelectorAll('.work-item');
+            const filterButtons = document.querySelectorAll('.filter-button');
+            searchTerm = searchTerm ? searchTerm.toLowerCase() : '';
+            
+            if (!composerFilter) {
+                filterButtons.forEach(button => {
+                    if (!button.classList.contains('composer')) {
+                        button.classList.toggle('active', button.dataset.filter === filter);
+                    }
+                });
+            } else {
+                document.querySelectorAll('.filter-button.composer').forEach(button => {
+                    button.classList.toggle('active', button.dataset.composer === composerFilter);
+                });
+            }
+
+            works.forEach(work => {
+                const isPopular = work.dataset.popular === 'true';
+                const isRecommended = work.dataset.recommended === 'true';
+                const composer = work.dataset.composer;
+                const titleElement = work.querySelector('.work-title');
+                const title = titleElement.textContent.toLowerCase();
+                
+                let shouldShow = true;
+
+                if (filter === 'popular') shouldShow = isPopular;
+                if (filter === 'recommended') shouldShow = isRecommended;
+
+                if (composerFilter && composerFilter !== 'all') {
+                    shouldShow = shouldShow && (composer === composerFilter);
+                }
+
+                if (searchTerm) {
+                    shouldShow = shouldShow && title.includes(searchTerm);
+                }
+
+                work.style.display = shouldShow ? 'grid' : 'none';
+
+                if (searchTerm && shouldShow) {
+                    const regex = new RegExp(`(${searchTerm})`, 'gi');
+                    titleElement.innerHTML = titleElement.textContent.replace(
+                        regex, 
+                        '<span class="highlight">$1</span>'
+                    );
+                } else {
+                    titleElement.innerHTML = titleElement.textContent;
+                }
+            });
+        }
+
+        function filterByComposer(composerName) {
+            const activeFilter = document.querySelector('.filter-button:not(.composer).active').dataset.filter;
+            const searchTerm = document.querySelector('.search-input').value;
+            filterWorks(activeFilter, searchTerm, composerName);
+        }
+
+        const debouncedSearch = debounce((searchTerm) => {
+            const activeFilter = document.querySelector('.filter-button:not(.composer).active').dataset.filter;
+            const activeComposer = document.querySelector('.filter-button.composer.active').dataset.composer;
+            filterWorks(activeFilter, searchTerm, activeComposer);
+        }, 200);
+    </script>
 </head>
 <body>
     <h1>Welcome, {{ name }}!</h1>
-    <p>Thank you for using mySTRO. Here's your selected composer's best stuff!</p>
-    <!--<h2>{{ composer_name }}</h2> -->
-    
-    {% if works %}
+    <p>Thank you for using mySTRO. Here's some great classical music!</p>
+
+    <h2>Results</h2>
+
+    <div class="search-box">
+        <span>Search:</span>
+        <input 
+            type="text" 
+            class="search-input" 
+            placeholder="Search by title..." 
+            oninput="debouncedSearch(this.value)"
+        >
+    </div>
+
+    <div class="filters">
+        <span>Filter by:</span>
+        <button class="filter-button active" data-filter="all" onclick="filterWorks('all')">All Works</button>
+        <button class="filter-button" data-filter="popular" onclick="filterWorks('popular')">Popular Only</button>
+        <button class="filter-button" data-filter="recommended" onclick="filterWorks('recommended')">Recommended Only</button>
+    </div>
+
+    <div class="composer-filters">
+        <span>Filter by composer:</span>
+        <button class="filter-button composer active" data-composer="all" onclick="filterByComposer('all')">All Composers</button>
+        {% for composer in composers %}
+            <button class="filter-button composer" data-composer="{{ composer }}" onclick="filterByComposer('{{ composer }}')">{{ composer }}</button>
+        {% endfor %}
+    </div>
+
     <ul>
-      {% for work in works %}
-        <li>
-          <strong>{{ work.title }}</strong>
-          {% if work.subtitle %} ({{ work.subtitle }}) {% endif %}
-          - Genre: {{ work.genre }}
-        </li>
-      {% endfor %}
+        {% if works %}
+            {% for work in works %}
+                <li class="work-item" 
+                    data-popular="{{ 'true' if work['popular'] else 'false' }}"
+                    data-recommended="{{ 'true' if work['recommended'] else 'false' }}"
+                    data-composer="{{ work['composer_name'] }}"
+                    data-genre="{{ work['genre'] }}">
+                    <div class="composer-name">{{ work['composer_name'] }}</div>
+                    <div class="work-info">
+                        <strong class="work-title">{{ work['title'] }}</strong>
+                        {% if work.get('subtitle') %}
+                            <em>({{ work['subtitle'] }})</em>
+                        {% endif %}
+                    </div>
+                    <div class="badges">
+                        <span class="badge genre {{ work['genre'] }}">{{ work['genre'] }}</span>
+                        {% if work['popular'] %}
+                            <span class="badge popular">Popular</span>
+                        {% endif %}
+                        {% if work['recommended'] %}
+                            <span class="badge recommended">Recommended</span>
+                        {% endif %}
+                    </div>
+                    <button class="add-button" title="Add to Library">+</button>
+                </li>
+            {% endfor %}
+        {% else %}
+            <li>No works found for the selected criteria.</li>
+        {% endif %}
     </ul>
-  {% else %}
-    <p>No works found for this composer.</p>
-  {% endif %}
     
-    <a href="/">Go back to the form</a>
+    <a href="/form" class="back-button">Go back to the form</a>
 </body>
 </html>
-
-
