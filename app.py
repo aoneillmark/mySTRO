@@ -166,9 +166,7 @@ def search():
                 if work.get("genre") in selected_genres
             ]
             all_works.extend(filtered_works)
-
-    if not all_works:
-        return "No works found for the selected composers and genres."
+        return render_template("noresults.html")
 
     # Get unique composer names for filtering
     unique_composers = sorted(list(set(work["composer_name"] for work in all_works)))

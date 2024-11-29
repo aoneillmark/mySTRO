@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+{% block title %}No Works Found{% endblock %}
+
+{% block content %}
+<div class="bg-linen p-10">
+    <main class="mt-10 mx-auto" style="max-width: 800px;">
+        <h2 class="text-3xl text-center mb-8 text-dark-purple">No Works Found</h2>
+        <p class="text-center text-lg mb-8" style="color: #333;">No works were found for the selected composers and genres.</p>
+
+        <!-- Back Button -->
+        <div class="text-center">
+            <a href="javascript:history.back()"
+               class="inline-block py-3 px-6 rounded text-white font-bold"
+               style="background-color: #8B4513; transition: background-color 0.2s ease; text-decoration: none;">
+                Back
+            </a>
+        </div>
+    </main>
+</div>
+
+<style>
+    a:hover {
+        background-color: #D2691E;
+    }
+</style>
+{% endblock %}
