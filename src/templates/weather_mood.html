@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+
+{% block title %}Weather Mood - MySTRO{% endblock %}
+
+{% block content %}
+<div class="bg-linen p-10">
+    <div class="mt-10 max-w-5xl mx-auto">
+        <section class="text-center">
+            <h2 class="text-4xl font-bold text-dark-purple">Weather Mood</h2>
+            <p class="mt-4 text-battleship-gray">Let the weather inspire your classical music journey</p>
+        </section>
+
+        <!-- Weather Card -->
+        <section class="mt-10">
+            {% if weather %}
+            <div class="bg-white rounded-lg shadow-md p-6 border-2 border-pumpkin">
+                <div class="flex justify-between items-center">
+                    <div>
+                        <h3 class="text-2xl font-semibold text-dark-purple">{{ weather.location.name }}</h3>
+                        <p class="text-lg text-battleship-gray">{{ weather.current.condition.text }}</p>
+                    </div>
+                    <div class="text-right">
+                        <p class="text-4xl font-bold text-pumpkin">{{ weather.current.temp_c }}°C</p>
+                        <p class="text-sm text-battleship-gray">Feels like {{ weather.current.feelslike_c }}°C</p>
+                    </div>
+                </div>
+            </div>
+            {% else %}
+            <div class="text-center text-battleship-gray">
+                <p>Weather data unavailable</p>
+            </div>
+            {% endif %}
+        </section>
+
+        <!-- Music Suggestion -->
+        {% if suggestion %}
+        <section class="mt-8">
+            <div class="bg-white rounded-lg shadow-md p-6 border-2 border-pumpkin">
+                <h3 class="text-2xl font-bold text-dark-purple mb-4">Today's Musical Suggestion</h3>
+                <div class="prose text-battleship-gray">
+                    {{ suggestion | safe }}
+                </div>
+            </div>
+        </section>
+        {% endif %}
+
+        <!-- Find Music Button -->
+        <div class="mt-10 text-center">
+            <a href="/form" class="inline-block bg-penn-red text-white px-8 py-4 text-lg font-bold rounded hover:bg-dark-purple transition">
+                Find More Music
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}
