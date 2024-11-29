@@ -6,7 +6,7 @@ from database import db
 from models.musicpiece import MusicPiece
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///your_database.db'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///mystro.db'
 db.init_app(app)
 
 with app.app_context():

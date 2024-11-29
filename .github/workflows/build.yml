@@ -60,7 +60,9 @@ jobs:
       - name: unit_test1
         run: pip install -r requirements.txt
       - name: Install pytest
-        run: pytest app_test2.py
+        run: |
+          pytest app_test2.py
+          pytest app_test.py
 
   deploy-to-impaas:
     needs: unit-testing
