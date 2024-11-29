@@ -40,22 +40,21 @@ def test_root_route(client):
 
 def test_search_route(client):
     with requests_mock.Mocker() as mock:
-        # Mock the 'works' API endpoint
+        # Mock API responses
         works_url = "https://api.openopus.org/work/list/composer/1/genre/all.json"
         mock.get(works_url, json={"works": [{"id": 1, "title": "Symphony No. 1", "genre": "Orchestral"}]})
 
-        # Mock the 'composer' API endpoint
         composer_url = "https://api.openopus.org/composer/list/ids/1.json"
         mock.get(composer_url, json={"composers": [{"id": 1, "complete_name": "Wolfgang Amadeus Mozart"}]})
 
         form_data = {
             "composer_id": "1",
             "name": "Mozart",
-            "genres": ["Orchestral"]  # Ensure 'genres' is a list
+            "genres": ["Orchestral"]
         }
         response = client.post("/search", data=form_data)
         assert response.status_code == 200
-        assert b"Symphony No. 1" in response.data
+        assert b"Symphony No. 1" in response.data  # Ensure the work appears in the response
 
 
 def test_search_genre_validation(client):
