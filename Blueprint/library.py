@@ -16,6 +16,31 @@ def all_pieces():
     all_pieces = database.session.execute(select(MusicPiece)).scalars().all()
     return render_template("library.html", pieces=all_pieces)
 
+@library.route("/add_piece", methods=["GET", "POST"])
+def add_piece():
+    """
+    Add a new music piece to the library.
+    """
+    composer = request.form.get("composer_name")
+    title = request.form.get("title")
+    subtitle = request.form.get("subtitle")
+    genre = request.form.get("genre")
+    popular = request.form.get("popular") == 'true'
+    recommended = request.form.get("recommended") == 'true'
+
+    new_piece = MusicPiece(
+        composer=composer,
+        title=title,
+        subtitle=subtitle,
+        genre=genre,
+        popular=popular,
+        recommended=recommended
+    )
+
+    database.session.add(new_piece)
+    database.session.commit()
+
+    return redirect(url_for("library.all_pieces"))
 
 @library.route("/<int:piece_id>", methods=["GET", "POST"])
 def single_piece(piece_id):
