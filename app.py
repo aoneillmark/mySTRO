@@ -38,7 +38,7 @@ with app.app_context():
 # Routes -------------------------------------------------------------------------------
 
 @app.route('/library')
-def get_music_pieces():
+def library():
     pieces = MusicPiece.query.all()
     return render_template("library.html", pieces=pieces)
 
@@ -72,10 +72,6 @@ def hello_world():
 @app.route("/form")
 def form():
     return render_template("form.html")
-
-@app.route("/library")
-def library():
-    return render_template("library.html")
 
 @app.route('/weather-mood')
 def weather_mood():
@@ -129,7 +125,6 @@ def search():
     selected_composer_ids = request.form.getlist("composer_id")
     name = request.form.get("name")
     selected_genres = request.form.getlist("genres")
-    print(f"Selected genres: {selected_genres}")  # Debugging line
 
     if not selected_composer_ids:
         return "No composer selected. Please try again."
