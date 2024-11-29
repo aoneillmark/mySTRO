@@ -62,7 +62,15 @@
                       class="action-button youtube-button" 
                       target="_blank" 
                       title="Search on YouTube">▶</a>
-                   <button class="action-button add-button" title="Add to Library">+</button>
+                    <form method="POST" action="{{ url_for('library.add_piece') }}">
+                        <input type="hidden" name="composer_name" value="{{ work['composer_name'] }}">
+                        <input type="hidden" name="title" value="{{ work['title'] }}">
+                        <input type="hidden" name="subtitle" value="{{ work.get('subtitle', '') }}">
+                        <input type="hidden" name="genre" value="{{ work['genre'] }}">
+                        <input type="hidden" name="popular" value="{{ 'true' if work['popular'] else 'false' }}">
+                        <input type="hidden" name="recommended" value="{{ 'true' if work['recommended'] else 'false' }}">
+                        <button type="submit" class="action-button add-button" title="Add to Library">+</button>
+                    </form>
                </li>
            {% endfor %}
        {% else %}

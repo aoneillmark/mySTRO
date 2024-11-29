@@ -63,9 +63,10 @@
                         <a href="{{ url_for('library.single_piece', piece_id=piece.id) }}"
                            class="action-button"
                            title="View Details">👁</a>
-                        <button onclick="deletePiece({{ piece.id }})"
-                            class="add-button"
-                            title="Delete">−</button>
+                        <form method="POST" action="{{ url_for('library.single_piece', piece_id=piece.id) }}">
+                            <input type="hidden" name="submit_button" value="delete">
+                            <button type="submit">−</button>
+                        </form>
                     </div>
                 </li>
             {% endfor %}
