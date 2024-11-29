@@ -25,17 +25,21 @@ def populate():
     initial_music_pieces = [
         MusicPiece(
             id=1,
-            title="PLACEHOLDER Sonata No. 14",
             composer="Ludwig van Beethoven",
+            title="PLACEHOLDER Sonata No. 14",
+            subtitle="Moonlight Sonata",
             genre="Classical",
-            description="A beautiful piano sonata composed by Beethoven. :3",
+            popular=True,
+            recommended=True,
         ),
         MusicPiece(
             id=2,
-            title="PLACEHOLDER Symphony No. 5",
-            composer="Ludwig van Beethoven",
+            composer="Johann Sebastian Bach",
+            title="PLACEHOLDER obscure piece",
+            subtitle="who even knows this one",
             genre="Classical",
-            description="A symphony composed by Beethoven.",
+            popular=False,
+            recommended=False,
         ),
     ]
     for piece in initial_music_pieces:
