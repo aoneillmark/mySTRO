@@ -12,11 +12,7 @@ from cli import create_all, drop_all, populate
 # Load environment variables
 load_dotenv()
 
-app = Flask(
-    __name__,
-    template_folder="src/templates",
-    static_folder="src/static"
-)
+app = Flask(__name__, template_folder="src/templates", static_folder="src/static")
 
 # Database initialization and config ------------------------------
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///mystro.db"
@@ -55,9 +51,7 @@ def home():
         composers_data = response.json()
         composers = composers_data.get("composers", [])
     else:
-        return (
-            f"Failed to fetch composers. Status Code: {response.status_code}"
-        )
+        return f"Failed to fetch composers. Status Code: {response.status_code}"
 
     genres = [
         "Keyboard", "Orchestral", "Chamber",
@@ -86,9 +80,7 @@ def weather_mood():
     try:
         weather_response = requests.get(weather_url)
         weather_data = (
-            weather_response.json()
-            if weather_response.status_code == 200
-            else None
+            weather_response.json() if weather_response.status_code == 200 else None
         )
 
         if weather_data:
@@ -128,9 +120,7 @@ def weather_mood():
         suggestion = None
 
     return render_template(
-        "weather_mood.html",
-        weather=weather_data,
-        suggestion=suggestion
+        "weather_mood.html", weather=weather_data, suggestion=suggestion
     )
 
 
@@ -150,9 +140,7 @@ def search():
     # Get works for each selected composer
     for composer_id in selected_composer_ids:
         # Get composer name
-        composer_url = (
-            f"https://api.openopus.org/composer/list/ids/{composer_id}.json"
-        )
+        composer_url = f"https://api.openopus.org/composer/list/ids/{composer_id}.json"
         composer_response = requests.get(composer_url)
         composer_name = "Unknown Composer"
 
@@ -196,10 +184,7 @@ def search():
     )
 
     return render_template(
-        "results.html",
-        name=name,
-        works=all_works,
-        composers=unique_composers
+        "results.html", name=name, works=all_works, composers=unique_composers
     )
 
 

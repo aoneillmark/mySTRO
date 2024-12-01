@@ -15,11 +15,7 @@ def test_home_route(client):
         composers_url = "https://api.openopus.org/composer/list/name/all.json"
         mock.get(
             composers_url,
-            json={
-                "composers": [
-                    {"id": 1, "name": "Mozart", "epoch": "Classical"}
-                ]
-            },
+            json={"composers": [{"id": 1, "name": "Mozart", "epoch": "Classical"}]},
         )
 
         response = client.get("/form")
@@ -30,9 +26,7 @@ def test_home_route(client):
 
 def test_composer_api_failure(client):
     with requests_mock.Mocker() as mock:
-        composers_url = (
-            "https://api.openopus.org/composer/list/name/all.json"
-        )
+        composers_url = "https://api.openopus.org/composer/list/name/all.json"
         mock.get(composers_url, status_code=500)
 
         response = client.get("/form")
@@ -50,43 +44,21 @@ def test_root_route(client):
 def test_search_route(client):
     with requests_mock.Mocker() as mock:
         # Mock API responses
-        works_url = (
-            "https://api.openopus.org/work/list/composer/"
-            "1/genre/all.json"
-        )
+        works_url = "https://api.openopus.org/work/list/composer/" "1/genre/all.json"
         mock.get(
             works_url,
             json={
-                "works": [
-                    {
-                        "id": 1,
-                        "title": "Symphony No. 1",
-                        "genre": "Orchestral"
-                    }
-                ]
+                "works": [{"id": 1, "title": "Symphony No. 1", "genre": "Orchestral"}]
             },
         )
 
-        composer_url = (
-            "https://api.openopus.org/composer/list/ids/1.json"
-        )
+        composer_url = "https://api.openopus.org/composer/list/ids/1.json"
         mock.get(
             composer_url,
-            json={
-                "composers": [
-                    {
-                        "id": 1,
-                        "complete_name": "Wolfgang Amadeus Mozart"
-                    }
-                ]
-            },
+            json={"composers": [{"id": 1, "complete_name": "Wolfgang Amadeus Mozart"}]},
         )
 
-        form_data = {
-            "composer_id": "1",
-            "name": "Mozart",
-            "genres": ["Orchestral"]
-        }
+        form_data = {"composer_id": "1", "name": "Mozart", "genres": ["Orchestral"]}
         response = client.post("/search", data=form_data)
         assert response.status_code == 200
         # Ensure the work appears in the response
