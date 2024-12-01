@@ -103,15 +103,19 @@ def weather_mood():
             if composers_response.status_code == 200:
                 composers_data = composers_response.json()
                 composers = (
-                    composers_data.get("composers", [])[:5]
+                    composers_data.get(
+                        "composers", []
+                    )[:5]
                 )
 
             weather_desc = (
-                weather_data["current"]["condition"]["text"]
+                weather_data["current"]
+                ["condition"]["text"]
             )
             temp = weather_data["current"]["temp_c"]
             composer_names = [
-                c.get("complete_name") for c in composers
+                c.get("complete_name")
+                for c in composers
             ]
 
             # Configure Gemini model
