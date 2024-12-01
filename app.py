@@ -95,8 +95,8 @@ def weather_mood():
             # Configure Gemini model
             model = genai.GenerativeModel("gemini-pro")
 
-            prompt = f"""Given that it's {weather_desc} and {temp}°C in London today, 
-            suggest a classical music piece that would complement this weather. 
+            prompt = f"""Given that it's {weather_desc} and {temp}°C in London today,
+            suggest a classical music piece that would complement this weather.
             Consider selecting from works by these composers: {', '.join(composer_names)}.
             Explain briefly why this piece fits the current weather and mood.
             Keep your response concise but engaging."""
