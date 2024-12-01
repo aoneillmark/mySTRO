@@ -11,7 +11,7 @@ jobs:
           export FLASK_APP=app.py
           echo "Setup complete"
 
-  python-formatting:
+  python-format:
     needs: setup
     runs-on: ubuntu-latest
     steps:
@@ -21,22 +21,13 @@ jobs:
         uses: actions/setup-python@v4
         with:
           python-version: '3.12'
-      - name: Install formatters
-        run: |
-          pip install black flake8
-      - name: Run Black
-        run: black .
+      - name: Install flake8
+        run: pip install flake8
       - name: Run flake8
         run: flake8 . --count --max-complexity=10 --max-line-length=127 --statistics
-      - name: Commit changes
-        run: |
-          git config --global user.name "github-actions[bot]"
-          git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          git add .
-          git diff --quiet && git diff --staged --quiet || (git commit -m "Apply automatic formatting changes" && git push)
 
   build-tailwind:
-    needs: python-formatting
+    needs: python-format
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
