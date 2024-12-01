@@ -3,6 +3,7 @@ from flask import Flask
 
 # Your Flask app setup and imports go here
 
+
 @pytest.fixture
 def app():
     """Create a new Flask app instance for testing."""
@@ -23,6 +24,7 @@ def app():
 
     return flask_app
 
+
 # Example test cases
 def test_database_insert(app):
     """Test database insert functionality."""
@@ -30,17 +32,20 @@ def test_database_insert(app):
         # Perform insert operations and assertions here
         assert True
 
+
 def test_database_query(app):
     """Test database query functionality."""
     with app.app_context():
         # Perform query operations and assertions here
         assert True
 
+
 def test_database_update(app):
     """Test database update functionality."""
     with app.app_context():
         # Perform update operations and assertions here
         assert True
+
 
 def test_database_delete(app):
     """Test database delete functionality."""

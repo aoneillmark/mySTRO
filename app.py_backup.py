@@ -1,11 +1,12 @@
 from flask import Flask, render_template, request
 import requests
-#from database import db as database
+
+# from database import db as database
 
 app = Flask(__name__, template_folder="src/templates", static_folder="src/static")
 
 # Database initialisation -------------------------------------------------------
-'''
+"""
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///todo.db"
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
@@ -23,7 +24,7 @@ from .cli import create_all, drop_all, populate
 with app.app_context():
     app.cli.add_command(create_all)
     app.cli.add_command(drop_all)
-    app.cli.add_command(populate)'''
+    app.cli.add_command(populate)"""
 # -------------------------------------------------------------------------------
 
 
@@ -33,7 +34,6 @@ def home():
     composers_url = "https://api.openopus.org/composer/list/name/all.json"
     response = requests.get(composers_url)
 
-
     composers = []
     if response.status_code == 200:
         composers_data = response.json()
@@ -42,17 +42,10 @@ def home():
         return f"Failed to fetch composers. Status Code: {response.status_code}"
 
     # Updated genres
-    genres = [
-        "Keyboard",
-        "Orchestral",
-        "Chamber",
-        "Stage",
-        "Choral",
-        "Opera",
-        "Vocal"
-    ]
+    genres = ["Keyboard", "Orchestral", "Chamber", "Stage", "Choral", "Opera", "Vocal"]
     # Render the form with the list of composers and genres
     return render_template("form.html", composers=composers, genres=genres)
+
 
 @app.route("/")
 def hello_world():
@@ -67,6 +60,7 @@ def form():
 @app.route("/library")
 def library():
     return render_template("library.html")
+
 
 @app.route("/search", methods=["POST"])
 def search():
@@ -101,11 +95,9 @@ def search():
         composer_id=selected_composer_id,
         genre=selected_genre,
         name=name,  # Pass name to template
-        works=works
-
+        works=works,
     )
 
-    
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=8000)
