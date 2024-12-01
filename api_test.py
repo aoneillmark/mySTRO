@@ -15,18 +15,24 @@ def test_home_route(client):
         composers_url = "https://api.openopus.org/composer/list/name/all.json"
         mock.get(
             composers_url,
-            json={"composers": [{"id": 1, "name": "Mozart", "epoch": "Classical"}]},
+            json={
+                "composers": [
+                    {"id": 1, "name": "Mozart", "epoch": "Classical"}
+                ]
+            },
         )
 
         response = client.get("/form")
         assert response.status_code == 200
-        # Adjust test to check for composer and epoch without requiring exact formatting
+        # Check for composer and epoch without requiring exact formatting
         assert b"Mozart (Classical)" in response.data
 
 
 def test_composer_api_failure(client):
     with requests_mock.Mocker() as mock:
-        composers_url = "https://api.openopus.org/composer/list/name/all.json"
+        composers_url = (
+            "https://api.openopus.org/composer/list/name/all.json"
+        )
         mock.get(composers_url, status_code=500)
 
         response = client.get("/form")
@@ -44,26 +50,47 @@ def test_root_route(client):
 def test_search_route(client):
     with requests_mock.Mocker() as mock:
         # Mock API responses
-        works_url = "https://api.openopus.org/work/list/composer/1/genre/all.json"
+        works_url = (
+            "https://api.openopus.org/work/list/composer/"
+            "1/genre/all.json"
+        )
         mock.get(
             works_url,
             json={
-                "works": [{"id": 1, "title": "Symphony No. 1", "genre": "Orchestral"}]
+                "works": [
+                    {
+                        "id": 1,
+                        "title": "Symphony No. 1",
+                        "genre": "Orchestral"
+                    }
+                ]
             },
         )
 
-        composer_url = "https://api.openopus.org/composer/list/ids/1.json"
+        composer_url = (
+            "https://api.openopus.org/composer/list/ids/1.json"
+        )
         mock.get(
             composer_url,
-            json={"composers": [{"id": 1, "complete_name": "Wolfgang Amadeus Mozart"}]},
+            json={
+                "composers": [
+                    {
+                        "id": 1,
+                        "complete_name": "Wolfgang Amadeus Mozart"
+                    }
+                ]
+            },
         )
 
-        form_data = {"composer_id": "1", "name": "Mozart", "genres": ["Orchestral"]}
+        form_data = {
+            "composer_id": "1",
+            "name": "Mozart",
+            "genres": ["Orchestral"]
+        }
         response = client.post("/search", data=form_data)
         assert response.status_code == 200
-        assert (
-            b"Symphony No. 1" in response.data
-        )  # Ensure the work appears in the response
+        # Ensure the work appears in the response
+        assert b"Symphony No. 1" in response.data
 
 
 def test_search_genre_validation(client):

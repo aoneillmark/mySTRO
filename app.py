@@ -12,9 +12,13 @@ from cli import create_all, drop_all, populate
 # Load environment variables
 load_dotenv()
 
-app = Flask(__name__, template_folder="src/templates", static_folder="src/static")
+app = Flask(
+    __name__,
+    template_folder="src/templates",
+    static_folder="src/static"
+)
 
-# Database initialization and config -------------------------------------------------------
+# Database initialization and config ------------------------------
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///mystro.db"
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 app.config["WEATHER_API_KEY"] = os.getenv("WEATHER_API_KEY")
@@ -32,7 +36,7 @@ with app.app_context():
     app.cli.add_command(populate)
     click.echo("CLI commands registered")
 
-# Routes -------------------------------------------------------------------------------
+# Routes ------------------------------------------------------
 
 
 @app.route("/library")
@@ -51,9 +55,14 @@ def home():
         composers_data = response.json()
         composers = composers_data.get("composers", [])
     else:
-        return f"Failed to fetch composers. Status Code: {response.status_code}"
+        return (
+            f"Failed to fetch composers. Status Code: {response.status_code}"
+        )
 
-    genres = ["Keyboard", "Orchestral", "Chamber", "Stage", "Choral", "Opera", "Vocal"]
+    genres = [
+        "Keyboard", "Orchestral", "Chamber",
+        "Stage", "Choral", "Opera", "Vocal"
+    ]
     return render_template("form.html", composers=composers, genres=genres)
 
 
@@ -69,12 +78,17 @@ def form():
 
 @app.route("/weather-mood")
 def weather_mood():
-    weather_url = f"http://api.weatherapi.com/v1/current.json?key={app.config['WEATHER_API_KEY']}&q=London&aqi=no"
+    weather_url = (
+        f"http://api.weatherapi.com/v1/current.json?"
+        f"key={app.config['WEATHER_API_KEY']}&q=London&aqi=no"
+    )
 
     try:
         weather_response = requests.get(weather_url)
         weather_data = (
-            weather_response.json() if weather_response.status_code == 200 else None
+            weather_response.json()
+            if weather_response.status_code == 200
+            else None
         )
 
         if weather_data:
@@ -84,9 +98,7 @@ def weather_mood():
             composers = []
             if composers_response.status_code == 200:
                 composers_data = composers_response.json()
-                composers = composers_data.get("composers", [])[
-                    :5
-                ]  # Get top 5 composers
+                composers = composers_data.get("composers", [])[:5]
 
             weather_desc = weather_data["current"]["condition"]["text"]
             temp = weather_data["current"]["temp_c"]
@@ -95,11 +107,14 @@ def weather_mood():
             # Configure Gemini model
             model = genai.GenerativeModel("gemini-pro")
 
-            prompt = f"""Given that it's {weather_desc} and {temp}°C in London today,
-            suggest a classical music piece that would complement this weather.
-            Consider selecting from works by these composers: {', '.join(composer_names)}.
-            Explain briefly why this piece fits the current weather and mood.
-            Keep your response concise but engaging."""
+            prompt = (
+                f"Given that it's {weather_desc} and {temp}°C in London today, "
+                f"suggest a classical music piece that would complement this "
+                f"weather. Consider selecting from works by these composers: "
+                f"{', '.join(composer_names)}. Explain briefly why this piece "
+                f"fits the current weather and mood. Keep your response concise "
+                f"but engaging."
+            )
 
             # Get Gemini's recommendation
             response = model.generate_content(prompt)
@@ -113,7 +128,9 @@ def weather_mood():
         suggestion = None
 
     return render_template(
-        "weather_mood.html", weather=weather_data, suggestion=suggestion
+        "weather_mood.html",
+        weather=weather_data,
+        suggestion=suggestion
     )
 
 
@@ -133,7 +150,9 @@ def search():
     # Get works for each selected composer
     for composer_id in selected_composer_ids:
         # Get composer name
-        composer_url = f"https://api.openopus.org/composer/list/ids/{composer_id}.json"
+        composer_url = (
+            f"https://api.openopus.org/composer/list/ids/{composer_id}.json"
+        )
         composer_response = requests.get(composer_url)
         composer_name = "Unknown Composer"
 
@@ -145,7 +164,8 @@ def search():
 
         # Get works
         works_url = (
-            f"https://api.openopus.org/work/list/composer/{composer_id}/genre/all.json"
+            "https://api.openopus.org/work/list/composer/"
+            f"{composer_id}/genre/all.json"
         )
         response = requests.get(works_url)
 
@@ -171,10 +191,15 @@ def search():
             return render_template("noresults.html")
 
     # Get unique composer names for filtering
-    unique_composers = sorted(list(set(work["composer_name"] for work in all_works)))
+    unique_composers = sorted(
+        list(set(work["composer_name"] for work in all_works))
+    )
 
     return render_template(
-        "results.html", name=name, works=all_works, composers=unique_composers
+        "results.html",
+        name=name,
+        works=all_works,
+        composers=unique_composers
     )
 
 

@@ -3,9 +3,13 @@ import requests
 
 # from database import db as database
 
-app = Flask(__name__, template_folder="src/templates", static_folder="src/static")
+app = Flask(
+    __name__,
+    template_folder="src/templates",
+    static_folder="src/static"
+)
 
-# Database initialisation -------------------------------------------------------
+# Database initialisation ------------------------------------------
 """
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///todo.db"
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
@@ -25,7 +29,7 @@ with app.app_context():
     app.cli.add_command(create_all)
     app.cli.add_command(drop_all)
     app.cli.add_command(populate)"""
-# -------------------------------------------------------------------------------
+# ---------------------------------------------------------------
 
 
 @app.route("/form", methods=["GET", "POST"])
@@ -39,12 +43,21 @@ def home():
         composers_data = response.json()
         composers = composers_data.get("composers", [])
     else:
-        return f"Failed to fetch composers. Status Code: {response.status_code}"
+        return (
+            f"Failed to fetch composers. Status Code: {response.status_code}"
+        )
 
     # Updated genres
-    genres = ["Keyboard", "Orchestral", "Chamber", "Stage", "Choral", "Opera", "Vocal"]
+    genres = [
+        "Keyboard", "Orchestral", "Chamber",
+        "Stage", "Choral", "Opera", "Vocal"
+    ]
     # Render the form with the list of composers and genres
-    return render_template("form.html", composers=composers, genres=genres)
+    return render_template(
+        "form.html",
+        composers=composers,
+        genres=genres
+    )
 
 
 @app.route("/")
@@ -77,7 +90,10 @@ def search():
         return "No genre selected. Please try again."
 
     # Fetch works from the API
-    works_url = f"https://api.openopus.org/work/list/composer/{selected_composer_id}/genre/all.json"
+    works_url = (
+        f"https://api.openopus.org/work/list/composer/"
+        f"{selected_composer_id}/genre/all.json"
+    )
     response = requests.get(works_url)
 
     works = []
@@ -85,9 +101,15 @@ def search():
         data = response.json()
         all_works = data.get("works", [])
         # Filter works by the selected genre
-        works = [work for work in all_works if work.get("genre") == selected_genre]
+        works = [
+            work for work in all_works
+            if work.get("genre") == selected_genre
+        ]
     else:
-        return f"Failed to fetch works for composer ID {selected_composer_id}. Status Code: {response.status_code}"
+        return (
+            f"Failed to fetch works for composer ID {selected_composer_id}. "
+            f"Status Code: {response.status_code}"
+        )
 
     # Render results page
     return render_template(
