@@ -99,9 +99,13 @@ def weather_mood():
                 composers_data = composers_response.json()
                 composers = composers_data.get("composers", [])[:5]
 
-            weather_desc = weather_data["current"]["condition"]["text"]
+            weather_desc = (
+                weather_data["current"]["condition"]["text"]
+            )
             temp = weather_data["current"]["temp_c"]
-            composer_names = [c.get("complete_name") for c in composers]
+            composer_names = [
+                c.get("complete_name") for c in composers
+            ]
 
             # Configure Gemini model
             model = genai.GenerativeModel("gemini-pro")
