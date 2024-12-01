@@ -78,7 +78,7 @@ def search():
 
     # Fetch works from the API
     works_url = (
-        f"https://api.openopus.org/work/list/composer/"
+        "https://api.openopus.org/work/list/composer/"
         f"{selected_composer_id}/genre/all.json"
     )
     response = requests.get(works_url)

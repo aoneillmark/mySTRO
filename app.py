@@ -81,7 +81,6 @@ def weather_mood():
         )
 
         if weather_data:
-            # Get works from OpenOpus API for context
             composers_url = "https://api.openopus.org/composer/list/pop.json"
             composers_response = requests.get(composers_url)
             composers = []
@@ -105,7 +104,6 @@ def weather_mood():
                 f"but engaging."
             )
 
-            # Get Gemini's recommendation
             response = model.generate_content(prompt)
             suggestion = response.text
         else:
@@ -134,10 +132,10 @@ def search():
 
     all_works = []
 
-    # Get works for each selected composer
     for composer_id in selected_composer_ids:
-        # Get composer name
-        composer_url = f"https://api.openopus.org/composer/list/ids/{composer_id}.json"
+        composer_url = (
+            "https://api.openopus.org/composer/list/" f"ids/{composer_id}.json"
+        )
         composer_response = requests.get(composer_url)
         composer_name = "Unknown Composer"
 
@@ -147,7 +145,6 @@ def search():
                 "complete_name", "Unknown Composer"
             )
 
-        # Get works
         works_url = (
             "https://api.openopus.org/work/list/composer/"
             f"{composer_id}/genre/all.json"
@@ -157,7 +154,6 @@ def search():
         if response.status_code == 200:
             data = response.json()
             composer_works = data.get("works", [])
-            # Add composer information to each work
             filtered_works = [
                 {
                     "title": work.get("title", ""),
@@ -175,7 +171,6 @@ def search():
         else:
             return render_template("noresults.html")
 
-    # Get unique composer names for filtering
     unique_composers = sorted(list(set(work["composer_name"] for work in all_works)))
 
     return render_template(
