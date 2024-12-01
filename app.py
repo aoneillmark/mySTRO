@@ -53,10 +53,7 @@ def home():
     else:
         return f"Failed to fetch composers. Status Code: {response.status_code}"
 
-    genres = [
-        "Keyboard", "Orchestral", "Chamber",
-        "Stage", "Choral", "Opera", "Vocal"
-    ]
+    genres = ["Keyboard", "Orchestral", "Chamber", "Stage", "Choral", "Opera", "Vocal"]
     return render_template("form.html", composers=composers, genres=genres)
 
 
@@ -179,9 +176,7 @@ def search():
             return render_template("noresults.html")
 
     # Get unique composer names for filtering
-    unique_composers = sorted(
-        list(set(work["composer_name"] for work in all_works))
-    )
+    unique_composers = sorted(list(set(work["composer_name"] for work in all_works)))
 
     return render_template(
         "results.html", name=name, works=all_works, composers=unique_composers
