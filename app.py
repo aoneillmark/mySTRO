@@ -6,6 +6,8 @@ from models.musicpiece import MusicPiece
 import os
 from dotenv import load_dotenv
 import google.generativeai as genai
+import Blueprint as blueprints
+from cli import create_all, drop_all, populate
 
 # Load environment variables
 load_dotenv()
@@ -22,13 +24,7 @@ genai.configure(api_key=app.config["GOOGLE_API_KEY"])
 # Set up extensions
 database.init_app(app)
 
-# Register blueprints
-import Blueprint as blueprints
-
 app.register_blueprint(blueprints.library)
-
-# Register cli commands
-from cli import create_all, drop_all, populate
 
 with app.app_context():
     app.cli.add_command(create_all)
