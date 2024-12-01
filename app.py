@@ -12,7 +12,11 @@ from cli import create_all, drop_all, populate
 # Load environment variables
 load_dotenv()
 
-app = Flask(__name__, template_folder="src/templates", static_folder="src/static")
+app = Flask(
+    __name__,
+    template_folder="src/templates",
+    static_folder="src/static"
+)
 
 # Database initialization and config ------------------------------
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///mystro.db"
@@ -51,9 +55,14 @@ def home():
         composers_data = response.json()
         composers = composers_data.get("composers", [])
     else:
-        return f"Failed to fetch composers. Status Code: {response.status_code}"
+        return (
+            f"Failed to fetch composers. Status Code: {response.status_code}"
+        )
 
-    genres = ["Keyboard", "Orchestral", "Chamber", "Stage", "Choral", "Opera", "Vocal"]
+    genres = [
+        "Keyboard", "Orchestral", "Chamber",
+        "Stage", "Choral", "Opera", "Vocal"
+    ]
     return render_template("form.html", composers=composers, genres=genres)
 
 
@@ -77,7 +86,9 @@ def weather_mood():
     try:
         weather_response = requests.get(weather_url)
         weather_data = (
-            weather_response.json() if weather_response.status_code == 200 else None
+            weather_response.json()
+            if weather_response.status_code == 200
+            else None
         )
 
         if weather_data:
@@ -115,7 +126,9 @@ def weather_mood():
         suggestion = None
 
     return render_template(
-        "weather_mood.html", weather=weather_data, suggestion=suggestion
+        "weather_mood.html",
+        weather=weather_data,
+        suggestion=suggestion
     )
 
 
@@ -134,7 +147,8 @@ def search():
 
     for composer_id in selected_composer_ids:
         composer_url = (
-            "https://api.openopus.org/composer/list/" f"ids/{composer_id}.json"
+            "https://api.openopus.org/composer/list/"
+            f"ids/{composer_id}.json"
         )
         composer_response = requests.get(composer_url)
         composer_name = "Unknown Composer"
@@ -142,7 +156,8 @@ def search():
         if composer_response.status_code == 200:
             composer_data = composer_response.json()
             composer_name = composer_data.get("composers", [{}])[0].get(
-                "complete_name", "Unknown Composer"
+                "complete_name",
+                "Unknown Composer"
             )
 
         works_url = (
@@ -171,10 +186,15 @@ def search():
         else:
             return render_template("noresults.html")
 
-    unique_composers = sorted(list(set(work["composer_name"] for work in all_works)))
+    unique_composers = sorted(
+        list(set(work["composer_name"] for work in all_works))
+    )
 
     return render_template(
-        "results.html", name=name, works=all_works, composers=unique_composers
+        "results.html",
+        name=name,
+        works=all_works,
+        composers=unique_composers
     )
 
 
