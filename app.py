@@ -93,7 +93,6 @@ def weather_mood():
         )
 
         if weather_data:
-            # Get works from OpenOpus API for context
             composers_url = (
                 "https://api.openopus.org/composer/list/pop.json"
             )
@@ -101,33 +100,53 @@ def weather_mood():
             composers = []
 
             if composers_response.status_code == 200:
-                composers_data = composers_response.json()
-                composers = (
-                    composers_data.get(
-                        "composers", []
-                    )[:5]
+                response_data = composers_response.json()
+                composers_list = response_data.get(
+                    "composers",
+                    []
                 )
+                composers = composers_list[:5]
 
-            weather_desc = (
-                weather_data["current"]
-                ["condition"]["text"]
+            # Get weather details step by step
+            weather_current = (
+                weather_data.get("current", {})
             )
-            temp = weather_data["current"]["temp_c"]
-            composer_names = [
-                c.get("complete_name")
-                for c in composers
-            ]
+            weather_condition = (
+                weather_current.get("condition", {})
+            )
+            weather_desc = weather_condition.get("text", "")
+            temp = weather_current.get("temp_c", 0)
+
+            # Build composer names list
+            composer_names = []
+            for composer in composers:
+                name = composer.get("complete_name")
+                composer_names.append(name)
 
             # Configure Gemini model
             model = genai.GenerativeModel("gemini-pro")
 
+            # Build prompt in parts
+            weather_part = f"Given that it's {weather_desc} and {temp}°C"
+            location_part = "in London today,"
+            request_part = (
+                "suggest a classical music piece that would complement "
+                "this weather."
+            )
+            composer_part = (
+                "Consider selecting from works by these composers: "
+                f"{', '.join(composer_names)}."
+            )
+            instruction_part = (
+                "Explain briefly why this piece fits the current weather "
+                "and mood."
+            )
+            ending_part = "Keep your response concise but engaging."
+
+            # Combine prompt parts
             prompt = (
-                f"Given that it's {weather_desc} and {temp}°C in London today, "
-                f"suggest a classical music piece that would complement this "
-                f"weather. Consider selecting from works by these composers: "
-                f"{', '.join(composer_names)}. Explain briefly why this piece "
-                f"fits the current weather and mood. Keep your response concise "
-                f"but engaging."
+                f"{weather_part} {location_part} {request_part} "
+                f"{composer_part} {instruction_part} {ending_part}"
             )
 
             response = model.generate_content(prompt)

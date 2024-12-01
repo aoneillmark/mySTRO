@@ -25,9 +25,17 @@ jobs:
         run: |
           pip install black flake8
       - name: Run Black
-        run: black . --line-length 79 --exclude "Blueprint/__init__.py"
+        run: |
+          black . --line-length 79 --exclude "Blueprint/__init__.py" --fast --preview
       - name: Run flake8
-        run: flake8 . --count --max-complexity=10 --max-line-length=79 --statistics --exclude Blueprint/__init__.py
+        run: |
+          flake8 . \
+            --count \
+            --max-complexity=10 \
+            --max-line-length=79 \
+            --statistics \
+            --exclude Blueprint/__init__.py \
+            --extend-ignore=E203
       - name: Commit changes
         run: |
           git config --global user.name "github-actions[bot]"
