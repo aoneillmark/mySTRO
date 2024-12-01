@@ -36,6 +36,7 @@ with app.app_context():
     app.cli.add_command(populate)
     click.echo("CLI commands registered")
 
+
 # Routes ------------------------------------------------------
 
 
@@ -92,12 +93,18 @@ def weather_mood():
         )
 
         if weather_data:
-            composers_url = "https://api.openopus.org/composer/list/pop.json"
+            # Get works from OpenOpus API for context
+            composers_url = (
+                "https://api.openopus.org/composer/list/pop.json"
+            )
             composers_response = requests.get(composers_url)
             composers = []
+
             if composers_response.status_code == 200:
                 composers_data = composers_response.json()
-                composers = composers_data.get("composers", [])[:5]
+                composers = (
+                    composers_data.get("composers", [])[:5]
+                )
 
             weather_desc = (
                 weather_data["current"]["condition"]["text"]
