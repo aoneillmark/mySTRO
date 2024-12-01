@@ -11,8 +11,32 @@ jobs:
           export FLASK_APP=app.py
           echo "Setup complete"
 
-  build-tailwind:
+  python-formatting:
     needs: setup
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.12'
+      - name: Install formatters
+        run: |
+          pip install black flake8
+      - name: Run Black
+        run: black .
+      - name: Run flake8
+        run: flake8 . --count --max-complexity=10 --max-line-length=127 --statistics
+      - name: Commit changes
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git add .
+          git diff --quiet && git diff --staged --quiet || (git commit -m "Apply automatic formatting changes" && git push)
+
+  build-tailwind:
+    needs: python-format
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -25,9 +49,8 @@ jobs:
         run: npm install
       - name: Build Tailwind CSS
         run: npm run build:css
-    
 
-  build-database: # Should run CLI commands: flask drop_all, flask create_all, flask populate
+  build-database:
     needs: build-tailwind
     runs-on: ubuntu-latest
     steps:
@@ -44,8 +67,6 @@ jobs:
           flask drop_all
           flask create_all
           flask populate
-
-
 
   unit-testing:
     needs: build-database
@@ -76,5 +97,3 @@ jobs:
           app-name: mystro
           deployment-token: ${{ secrets.IMPAAS_DEPLOY_TOKEN }}
           method: PLATFORM
-
-#add python formatting flake 8
