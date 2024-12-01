@@ -7,7 +7,7 @@ A Flask-based web application that recommends classical music based on weather c
 - **Weather-Based Music Suggestions**: Uses AI to recommend classical pieces based on current weather conditions
 - **Composer Search**: Browse and search through a comprehensive database of classical composers
 - **Genre Filtering**: Filter music pieces by different genres (Keyboard, Orchestral, Chamber, etc.)
-- **Library Management**: Organize and maintain your personal classical music collection
+- **Library Management**: Organise and maintain your personal classical music collection
 - **OpenOpus API Integration**: Access a vast database of classical music works and composers
 
 ## Components
@@ -57,7 +57,7 @@ source .venv/bin/activate
 
 3. Install Python dependencies:
 ```bash
-pip install -r src/requirements.txt
+pip install -r requirements.txt
 ```
 
 4. Install Node.js dependencies:
