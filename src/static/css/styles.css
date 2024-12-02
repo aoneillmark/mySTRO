@@ -861,7 +861,7 @@ video {
 /* Work items */
 .work-item {
   display: grid;
-  grid-template-columns: 200px 1fr auto auto auto;
+  grid-template-columns: 200px 1fr auto auto auto auto;  /* Added one more auto for all buttons */
   gap: 20px;
   background-color: #FFDAB9;
   margin: 10px 0;
@@ -869,6 +869,7 @@ video {
   border-radius: 5px;
   box-shadow: 2px 2px 5px rgba(139, 69, 19, 0.2);
   align-items: center;
+  width: 100%;  /* Ensure it takes full width */
 }
 
 .composer-name {
@@ -908,42 +909,55 @@ video {
 .badge.recommended { background-color: #228B22; }
 
 /* Action buttons */
+/* Action buttons */
 .action-button {
-  width: 30px;
-  height: 30px;
-  border-radius: 50%;
-  color: white;
   border: none;
+  background: none;
   font-size: 20px;
+  color: #8B4513;
   cursor: pointer;
-  display: flex;
+  text-decoration: none;
+  display: inline-flex;
   align-items: center;
   justify-content: center;
-  margin-left: 10px;
   transition: all 0.2s ease;
-  text-decoration: none;
+  padding: 0;
+  width: auto;
+  height: auto;
+  border-radius: 0;
+  margin: 0;
 }
 
+.action-button:hover {
+  color: #D2691E;
+  transform: none;
+}
+
+/* Special styling for add and delete buttons */
+.add-button, 
+form .action-button {  /* Targets the delete button inside forms */
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: #8B4513;
+  color: white;
+  font-size: 20px;
+  line-height: 1;
+  padding-bottom: 4px;
+}
+
+.add-button:hover,
+form .action-button:hover {
+  background: #D2691E;
+  color: white;
+  transform: scale(1.1);
+}
+
+/* Remove the special YouTube button styling */
 .youtube-button {
-  background-color: #FF0000;
+  background: none;
 }
 
 .youtube-button:hover {
-  background-color: #CC0000;
-  transform: scale(1.1);
-}
-
-.add-button {
-  background-color: #D2691E;
-}
-
-.add-button:hover {
-  background-color: #8B4513;
-  transform: scale(1.1);
-}
-
-.highlight {
-  background-color: rgba(210, 105, 30, 0.2);
-  padding: 0 2px;
-  border-radius: 3px;
+  background: none;
 }
