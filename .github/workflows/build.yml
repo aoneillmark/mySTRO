@@ -83,6 +83,8 @@ jobs:
           export PYTHONPATH=$PYTHONPATH:$(pwd)/..
           pytest api_test.py
           pytest database_test.py
+          pytest email_test.py
+          pytest twitter_test.py
 
   deploy-to-impaas:
     needs: unit-testing
