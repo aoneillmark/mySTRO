@@ -13,11 +13,11 @@
                 <strong>Genre:</strong> {{ piece.genre }}
             </p>
             <p class="text-battleship-gray mt-2">
-                <strong>Description:</strong> {{ piece.description or "No description available" }}
+                <strong>Description (AI Generated):</strong> {{ ai_description if ai_description else "Unable to generate description at this time." }}
             </p>
-            <form method="POST" action="{{ url_for('library.single_piece', piece_id=piece.id) }}">
+            <form method="POST" action="{{ url_for('library.single_piece', piece_id=piece.id) }}" class="mt-6">
                 <input type="hidden" name="submit_button" value="delete">
-                <button type="submit">Delete</button>
+                <button type="submit" class="text-penn-red hover:text-dark-purple">Delete</button>
             </form>
         </div>
     </div>

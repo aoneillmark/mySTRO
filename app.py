@@ -37,17 +37,17 @@ with app.app_context():
     click.echo("CLI commands registered")
 
 
+# Helper functions --------------------------------------------
+
 # Routes ------------------------------------------------------
 
-
-@app.route("/library")
-def library():
-    pieces = MusicPiece.query.all()
-    return render_template("library.html", pieces=pieces)
+@app.route("/")
+def hello_world():
+    return render_template("about.html")
 
 
 @app.route("/form", methods=["GET", "POST"])
-def home():
+def form():
     composers_url = "https://api.openopus.org/composer/list/name/all.json"
     response = requests.get(composers_url)
 
@@ -56,25 +56,13 @@ def home():
         composers_data = response.json()
         composers = composers_data.get("composers", [])
     else:
-        return (
-            f"Failed to fetch composers. Status Code: {response.status_code}"
-        )
+        return f"Failed to fetch composers. Status Code: {response.status_code}"
 
     genres = [
         "Keyboard", "Orchestral", "Chamber",
         "Stage", "Choral", "Opera", "Vocal"
     ]
     return render_template("form.html", composers=composers, genres=genres)
-
-
-@app.route("/")
-def hello_world():
-    return render_template("about.html")
-
-
-@app.route("/form")
-def form():
-    return render_template("form.html")
 
 
 @app.route("/weather-mood")
@@ -93,27 +81,18 @@ def weather_mood():
         )
 
         if weather_data:
-            composers_url = (
-                "https://api.openopus.org/composer/list/pop.json"
-            )
+            composers_url = "https://api.openopus.org/composer/list/pop.json"
             composers_response = requests.get(composers_url)
             composers = []
 
             if composers_response.status_code == 200:
                 response_data = composers_response.json()
-                composers_list = response_data.get(
-                    "composers",
-                    []
-                )
+                composers_list = response_data.get("composers", [])
                 composers = composers_list[:5]
 
             # Get weather details step by step
-            weather_current = (
-                weather_data.get("current", {})
-            )
-            weather_condition = (
-                weather_current.get("condition", {})
-            )
+            weather_current = weather_data.get("current", {})
+            weather_condition = weather_current.get("condition", {})
             weather_desc = weather_condition.get("text", "")
             temp = weather_current.get("temp_c", 0)
 
