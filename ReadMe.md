@@ -91,8 +91,6 @@ flask populate
 flask run
 ```
 
-The application will be available at http://localhost:8000
-
 ## Testing
 Run the test suite using:
 ```bash
