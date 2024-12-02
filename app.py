@@ -15,7 +15,8 @@ load_dotenv()
 
 
 # Initialize Flask application
-app = Flask(__name__, template_folder="src/templates", static_folder="src/static")
+app = Flask(__name__, template_folder="src/templates",
+            static_folder="src/static")
 
 
 # Database initialization and configuration
@@ -51,11 +52,13 @@ def home():
 
     if response.status_code == 200:
         composers_data = response.json()  # Parse JSON response
-        composers = composers_data.get("composers", [])  # Fetch composer data
+        composers = (
+            composers_data.get("composers", []))  # Fetch composer data
     else:
         return f"Failed to fetch composers. Status Code: {response.status_code}"
 
-    genres = ["Keyboard", "Orchestral", "Chamber", "Stage", "Choral", "Opera", "Vocal"]
+    genres = \
+        ["Keyboard", "Orchestral", "Chamber", "Stage", "Choral", "Opera", "Vocal"]
     return render_template("form.html", composers=composers, genres=genres)
 
 
@@ -80,7 +83,8 @@ def weather_mood():
     try:
         weather_response = requests.get(weather_url)
         weather_data = (
-            weather_response.json() if weather_response.status_code == 200 else None
+            weather_response.json() if weather_response.status_code == 200
+            else None
         )
 
         if weather_data:
@@ -100,7 +104,8 @@ def weather_mood():
             temp = weather_current.get("temp_c", 0)
 
             # Prepare composer names
-            composer_names = [composer.get("complete_name") for composer in composers]
+            composer_names = [composer.get("complete_name")
+                              for composer in composers]
 
             model = genai.GenerativeModel("gemini-pro")
 
@@ -108,14 +113,16 @@ def weather_mood():
             weather_part = f"Given that it's {weather_desc} and {temp}°C"
             location_part = "in London today,"
             request_part = (
-                "suggest a classical music piece that would complement " "this weather."
+                "suggest a classical music piece that "
+                "would complement " "this weather."
             )
             composer_part = (
                 "Consider selecting from works by these composers: "
                 f"{', '.join(composer_names)}."
             )
             instruction_part = (
-                "Explain briefly why this piece fits the current weather " "and mood."
+                "Explain briefly why this piece fits "
+                "the current weather " "and mood."
             )
             ending_part = "Keep your response concise but engaging."
 
@@ -191,10 +198,12 @@ def search():
         else:
             return render_template("noresults.html")
 
-    unique_composers = sorted(list(set(work["composer_name"] for work in all_works)))
+    unique_composers = sorted(list(set(work["composer_name"]
+                                       for work in all_works)))
 
     return render_template(
-        "results.html", name=name, works=all_works, composers=unique_composers
+        "results.html", name=name,
+        works=all_works, composers=unique_composers
     )
 
 
