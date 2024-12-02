@@ -64,27 +64,31 @@ def single_piece(piece_id):
 
     return render_template("library_piece.html", piece=music_piece)
 
-# N.B. REMOVE THIS! UNLESS IT'S IMPORTANT. 
-# @library.route("/form", methods=["GET", "POST"])
-# def library_form():
-#     """
-#     Display and handle the library form.
-#     User can search for music pieces based on selected criteria.
-#     """
-#     try:
-#         response = requests.get("https://api.openopus.org/composer/list/name/all.json")
-#         composers = response.json()["composers"] if response.status_code == 200 else []
-#     except Exception:
-#         composers = []
 
-#     genres = [
-#         "Keyboard",
-#         "Orchestral",
-#         "Chamber",
-#         "Stage",
-#         "Choral",
-#         "Opera",
-#         "Vocal",
-#     ]
+@library.route("/form", methods=["GET", "POST"])
+def library_form():
+    """
+    Display and handle the library form.
+    User can search for music pieces based on selected criteria.
+    """
+    try:
+        response = request.get(
+            "https://api.openopus.org/composer/list/name/all.json"
+        )
+        composers = (
+            response.json()["composers"] if response.status_code == 200 else []
+        )
+    except Exception:
+        composers = []
 
-#     return render_template("form.html", composers=composers, genres=genres)
+    genres = [
+        "Keyboard",
+        "Orchestral",
+        "Chamber",
+        "Stage",
+        "Choral",
+        "Opera",
+        "Vocal",
+    ]
+
+    return render_template("form.html", composers=composers, genres=genres)
