@@ -8,7 +8,7 @@ from dotenv import load_dotenv
 import google.generativeai as genai  # Google Generative AI
 import Blueprint as blueprints  # Custom blueprints
 from cli import create_all, drop_all, populate  # Custom CLI commands
-
+from flask_session import Session
 
 # Load environment variables
 load_dotenv()
@@ -24,8 +24,10 @@ app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///mystro.db"
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 app.config["WEATHER_API_KEY"] = os.getenv("WEATHER_API_KEY")
 app.config["GOOGLE_API_KEY"] = os.getenv("GOOGLE_API_KEY")
+app.config["SESSION_TYPE"] = "filesystem"
 genai.configure(api_key=app.config["GOOGLE_API_KEY"])
 
+Session(app)
 
 database.init_app(app)
 app.register_blueprint(blueprints.library)

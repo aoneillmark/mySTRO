@@ -14,8 +14,17 @@ def all_pieces():
     """
     Display all music pieces in the user's library.
     """
-    all_pieces = database.session.execute(select(MusicPiece)).scalars().all()
-    return render_template("library.html", pieces=all_pieces)
+    user_library = session.get("library", [])
+
+    # Ensure all items have an id
+    for index, piece in enumerate(user_library):
+        if 'id' not in piece:
+            piece['id'] = index + 1
+
+    session['library'] = user_library
+    session.modified = True
+
+    return render_template("library.html", pieces=user_library)
 
 
 @library.route("/add_piece", methods=["GET", "POST"])
@@ -23,26 +32,33 @@ def add_piece():
     """
     Add a new music piece to the library.
     """
-    composer = request.form.get("composer_name")
-    title = request.form.get("title")
-    subtitle = request.form.get("subtitle")
-    genre = request.form.get("genre")
-    popular = request.form.get("popular") == "true"
-    recommended = request.form.get("recommended") == "true"
+    if request.method == "POST":
+        composer = request.form.get("composer_name")
+        title = request.form.get("title")
+        subtitle = request.form.get("subtitle")
+        genre = request.form.get("genre")
+        popular = request.form.get("popular") == "true"
+        recommended = request.form.get("recommended") == "true"
 
-    new_piece = MusicPiece(
-        composer=composer,
-        title=title,
-        subtitle=subtitle,
-        genre=genre,
-        popular=popular,
-        recommended=recommended,
-    )
+        new_piece = {
+            "id": len(session.get("library", [])) + 1,  # Assign a unique ID
+            "composer": composer,
+            "title": title,
+            "subtitle": subtitle,
+            "genre": genre,
+            "popular": popular,
+            "recommended": recommended,
+        }
 
-    database.session.add(new_piece)
-    database.session.commit()
+        if "library" not in session:
+            session["library"] = []
 
-    return redirect(url_for("library.all_pieces"))
+        session["library"].append(new_piece)
+        session.modified = True
+
+        return redirect(url_for("library.all_pieces"))
+
+    return render_template("add_piece.html")
 
 
 @library.route("/<int:piece_id>", methods=["GET", "POST"])
