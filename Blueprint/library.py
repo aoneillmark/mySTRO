@@ -12,11 +12,15 @@ def all_pieces():
     Display all music pieces in the user's library.
     """
     user_name = request.args.get("user_name")
-    # all_pieces = db.session.query(MusicPiece).all()
+    if not user_name:
+        # No username provided, render a form to input username
+        return render_template("library.html", pieces=[], username_missing=True)
+
     user_pieces = (
         db.session.query(MusicPiece).filter_by(user_name=user_name).all()
     )  # Advanced query
-    return render_template("library.html", pieces=user_pieces)
+    return render_template("library.html", pieces=user_pieces, username_missing=False, user_name=user_name)
+
 
 
 @library.route("/add_piece", methods=["GET", "POST"])
