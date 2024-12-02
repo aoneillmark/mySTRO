@@ -2,7 +2,7 @@ import click
 from flask import Flask, render_template, request
 import requests
 from database import db as database  # SQLAlchemy database instance
-from models.musicpiece import MusicPiece
+# from models.musicpiece import MusicPiece
 import os
 from dotenv import load_dotenv
 import google.generativeai as genai  # Google Generative AI
@@ -44,6 +44,7 @@ with app.app_context():
 
 # Routes ------------------------------------------------------
 
+
 @app.route("/")
 def hello_world():
     return render_template("about.html")
@@ -57,14 +58,15 @@ def form():
 
     if response.status_code == 200:
         composers_data = response.json()  # Parse JSON response
-        composers = (
-            composers_data.get("composers", []))  # Fetch composer data
+        composers = composers_data.get("composers", [])
+        # Fetch composer data
     else:
-        return f"Failed to fetch composers. Status Code: {response.status_code}"
+        return (
+            f"Failed to fetch composers. Status Code: {response.status_code}"
+            )
 
-    genres = \
-        ["Keyboard", "Orchestral", "Chamber",
-         "Stage", "Choral", "Opera", "Vocal"]
+    genres = ["Keyboard", "Orchestral", "Chamber",
+              "Stage", "Choral", "Opera", "Vocal"]
     return render_template("form.html", composers=composers, genres=genres)
 
 
@@ -79,7 +81,8 @@ def weather_mood():
     try:
         weather_response = requests.get(weather_url)
         weather_data = (
-            weather_response.json() if weather_response.status_code == 200
+            weather_response.json()
+            if weather_response.status_code == 200
             else None
         )
 
@@ -100,9 +103,9 @@ def weather_mood():
             temp = weather_current.get("temp_c", 0)
 
             # Prepare composer names
-            composer_names = [composer.get("complete_name")
-                              for composer in composers]
-
+            composer_names = (
+                [composer.get("complete_name") for composer in composers]
+            )
             model = genai.GenerativeModel("gemini-pro")
 
             # Build prompt parts
@@ -110,7 +113,8 @@ def weather_mood():
             location_part = "in London today,"
             request_part = (
                 "suggest a classical music piece that "
-                "would complement " "this weather."
+                "would complement "
+                "this weather."
             )
             composer_part = (
                 "Consider selecting from works by these composers: "
@@ -118,7 +122,8 @@ def weather_mood():
             )
             instruction_part = (
                 "Explain briefly why this piece fits "
-                "the current weather " "and mood."
+                "the current weather "
+                "and mood."
             )
             ending_part = "Keep your response concise but engaging."
 
@@ -194,12 +199,12 @@ def search():
         else:
             return render_template("noresults.html")
 
-    unique_composers = sorted(list(set(work["composer_name"]
-                                       for work in all_works)))
+    unique_composers = sorted(
+        list(set(work["composer_name"] for work in all_works))
+    )
 
     return render_template(
-        "results.html", name=name,
-        works=all_works, composers=unique_composers
+        "results.html", name=name, works=all_works, composers=unique_composers
     )
 
 

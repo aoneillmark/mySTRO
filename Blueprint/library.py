@@ -1,8 +1,5 @@
 from flask import Blueprint, render_template, redirect, url_for, request
-from sqlalchemy import select
-import google.generativeai as genai
-
-from database import db as database
+from database import db
 from models.musicpiece import MusicPiece
 
 # Define the Blueprint for the library
@@ -14,17 +11,8 @@ def all_pieces():
     """
     Display all music pieces in the user's library.
     """
-    user_library = session.get("library", [])
-
-    # Ensure all items have an id
-    for index, piece in enumerate(user_library):
-        if 'id' not in piece:
-            piece['id'] = index + 1
-
-    session['library'] = user_library
-    session.modified = True
-
-    return render_template("library.html", pieces=user_library)
+    all_pieces = db.session.query(MusicPiece).all()
+    return render_template("library.html", pieces=all_pieces)
 
 
 @library.route("/add_piece", methods=["GET", "POST"])
@@ -32,33 +20,26 @@ def add_piece():
     """
     Add a new music piece to the library.
     """
-    if request.method == "POST":
-        composer = request.form.get("composer_name")
-        title = request.form.get("title")
-        subtitle = request.form.get("subtitle")
-        genre = request.form.get("genre")
-        popular = request.form.get("popular") == "true"
-        recommended = request.form.get("recommended") == "true"
+    composer = request.form.get("composer_name")
+    title = request.form.get("title")
+    subtitle = request.form.get("subtitle")
+    genre = request.form.get("genre")
+    popular = request.form.get("popular") == "true"
+    recommended = request.form.get("recommended") == "true"
 
-        new_piece = {
-            "id": len(session.get("library", [])) + 1,  # Assign a unique ID
-            "composer": composer,
-            "title": title,
-            "subtitle": subtitle,
-            "genre": genre,
-            "popular": popular,
-            "recommended": recommended,
-        }
+    new_piece = MusicPiece(
+        composer=composer,
+        title=title,
+        subtitle=subtitle,
+        genre=genre,
+        popular=popular,
+        recommended=recommended,
+    )
 
-        if "library" not in session:
-            session["library"] = []
+    db.session.add(new_piece)
+    db.session.commit()
 
-        session["library"].append(new_piece)
-        session.modified = True
-
-        return redirect(url_for("library.all_pieces"))
-
-    return render_template("add_piece.html")
+    return redirect(url_for("library.all_pieces"))
 
 
 @library.route("/<int:piece_id>", methods=["GET", "POST"])
@@ -66,25 +47,40 @@ def single_piece(piece_id):
     """
     View or delete a single music piece.
     """
-    music_piece = database.get_or_404(
+    music_piece = db.get_or_404(
         MusicPiece, piece_id, description="Music piece not found."
     )
-
-    # Generate AI description
-    ai_description = None
-    try:
-        model = genai.GenerativeModel("gemini-pro")
-        prompt = f"Give a brief 2-3 sentence description of the classical music piece '{music_piece.title}' by {music_piece.composer}. Consider that it is a {music_piece.genre} work. Focus on its historical significance and emotional impact."
-        response = model.generate_content(prompt)
-        ai_description = response.text
-    except Exception as e:
-        print(f"Error generating AI description: {e}")
 
     if request.method == "POST":
         # Handle delete action
         if request.form.get("submit_button") == "delete":
-            database.session.delete(music_piece)
-            database.session.commit()
+            db.session.delete(music_piece)
+            db.session.commit()
             return redirect(url_for("library.all_pieces"))
 
-    return render_template("library_piece.html", piece=music_piece, ai_description=ai_description)
+    return render_template("library_piece.html", piece=music_piece)
+
+
+@library.route("/form", methods=["GET", "POST"])
+def library_form():
+    """
+    Display and handle the library form.
+    User can search for music pieces based on selected criteria.
+    """
+    try:
+        response = requests.get("https://api.openopus.org/composer/list/name/all.json")
+        composers = response.json()["composers"] if response.status_code == 200 else []
+    except Exception:
+        composers = []
+
+    genres = [
+        "Keyboard",
+        "Orchestral",
+        "Chamber",
+        "Stage",
+        "Choral",
+        "Opera",
+        "Vocal",
+    ]
+
+    return render_template("form.html", composers=composers, genres=genres)

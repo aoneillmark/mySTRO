@@ -27,10 +27,7 @@ def test_open_opus_composer_api():
 def test_open_opus_work_api():
     """Test OpenOpus works list API."""
     composer_id = "145"  # Mozart's ID
-    url = (
-        "https://api.openopus.org/work/list/composer/"
-        f"{composer_id}/genre/all.json"
-    )
+    url = "https://api.openopus.org/work/list/composer/" f"{composer_id}/genre/all.json"
     response = requests.get(url)
 
     assert response.status_code == 200
@@ -79,7 +76,7 @@ def test_gemini_api_music_description():
     test_piece = {
         "title": "Symphony No. 5",
         "composer": "Beethoven",
-        "genre": "Symphony"
+        "genre": "Symphony",
     }
 
     # Create prompt
@@ -100,8 +97,8 @@ def test_gemini_api_music_description():
 
     # Check if response contains key elements
     assert any(
-        word in response.text.lower() for word in
-        [test_piece['title'].lower(), test_piece['composer'].lower()]
+        word in response.text.lower()
+        for word in [test_piece["title"].lower(), test_piece["composer"].lower()]
     )
 
 
@@ -136,11 +133,13 @@ def test_gemini_api_weather_suggestion():
 
     # Check if response mentions weather or composer
     response_lower = response.text.lower()
-    weather_mood_mentioned = any([
-        weather_desc.lower() in response_lower,
-        "weather" in response_lower,
-        "mood" in response_lower
-    ])
+    weather_mood_mentioned = any(
+        [
+            weather_desc.lower() in response_lower,
+            "weather" in response_lower,
+            "mood" in response_lower,
+        ]
+    )
     composer_mentioned = any(
         composer.lower() in response_lower for composer in composers
     )
@@ -153,7 +152,7 @@ def test_youtube_search_url():
     test_piece = {
         "composer_name": "Mozart",
         "title": "Symphony No. 40",
-        "subtitle": "in G minor"
+        "subtitle": "in G minor",
     }
 
     # Build search query like in the template
@@ -179,10 +178,7 @@ def test_youtube_search_url():
 
 def test_youtube_search_url_no_subtitle():
     """Test YouTube search URL generation without subtitle."""
-    test_piece = {
-        "composer_name": "Beethoven",
-        "title": "Symphony No. 5"
-    }
+    test_piece = {"composer_name": "Beethoven", "title": "Symphony No. 5"}
 
     # Build search query without subtitle
     search_query = f"{test_piece['composer_name']} {test_piece['title']}"
@@ -206,7 +202,7 @@ def test_youtube_search_url_special_characters():
     test_piece = {
         "composer_name": "Dvořák",
         "title": "Symphony No. 9",
-        "subtitle": "From the New World"
+        "subtitle": "From the New World",
     }
 
     # Build search query
@@ -229,10 +225,7 @@ def test_youtube_search_url_special_characters():
 @pytest.mark.skip(reason="API key required")
 def test_weather_api_invalid_key():
     """Test Weather API with invalid key."""
-    url = (
-        "http://api.weatherapi.com/v1/current.json?"
-        "key=invalid_key&q=London&aqi=no"
-    )
+    url = "http://api.weatherapi.com/v1/current.json?" "key=invalid_key&q=London&aqi=no"
     response = requests.get(url)
     assert response.status_code == 401  # Unauthorized
 
@@ -246,7 +239,4 @@ def test_gemini_api_invalid_key():
         model.generate_content("Test prompt")  # Removed response assignment
         assert False, "Should have raised an error"
     except Exception as e:
-        assert (
-            "API key" in str(e).lower() or
-            "authentication" in str(e).lower()
-        )
+        assert "API key" in str(e).lower() or "authentication" in str(e).lower()
