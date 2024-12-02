@@ -1,54 +1,163 @@
 import pytest
 from flask import Flask
+from database import db
+from models.musicpiece import MusicPiece
+from cli import create_all, drop_all, populate
 
-# Your Flask app setup and imports go here
 
-
+# Create a test Flask application with an in-memory database
+# So tests are isolated and don't affect the production database
 @pytest.fixture
 def app():
-    """Create a new Flask app instance for testing."""
-    # Create a Flask app instance
     flask_app = Flask(__name__)
+    # Use in-memory for faster testing and isolation
+    flask_app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///:memory:"
+    flask_app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
+    db.init_app(flask_app)
 
-    # Define the TestConfig class directly in this file
-    class TestConfig:
-        SQLALCHEMY_DATABASE_URI = "sqlite:///test.db"  # Example test DB URI
-        TESTING = True
-        SQLALCHEMY_TRACK_MODIFICATIONS = False
-
-    # Apply the configuration
-    flask_app.config.from_object(TestConfig)
-
-    # Initialize extensions like SQLAlchemy here, if applicable
-    # db.init_app(flask_app)
-
-    return flask_app
+    with flask_app.app_context():
+        db.create_all()  # Create tables before each test
+        yield flask_app  # Run the test
+        db.drop_all()  # Clean up after each test
 
 
-# Example test cases
-def test_database_insert(app):
-    """Test database insert functionality."""
+# Test CREATE operation
+def test_create_music_piece(app):
     with app.app_context():
-        # Perform insert operations and assertions here
-        assert True
+        # Create a new music piece with all fields
+        piece = MusicPiece(
+            title="Symphony No. 5",
+            composer="Beethoven",
+            genre="Orchestral",
+            subtitle="Fate",
+            popular=True,
+            recommended=True,
+        )
+        db.session.add(piece)
+        db.session.commit()
+
+        # Verify all fields were saved correctly
+        assert piece.id is not None
+        assert piece.title == "Symphony No. 5"
+        assert piece.subtitle == "Fate"
+        assert piece.popular is True
+        assert piece.recommended is True
 
 
-def test_database_query(app):
-    """Test database query functionality."""
+# Test READ operation
+def test_read_music_piece(app):
     with app.app_context():
-        # Perform query operations and assertions here
-        assert True
+        # Add test data
+        piece = MusicPiece(
+            title="Moonlight Sonata",
+            composer="Beethoven",
+            genre="Piano",
+            subtitle="Quasi una fantasia",
+            popular=True,
+            recommended=False,
+        )
+        db.session.add(piece)
+        db.session.commit()
+
+        # Test retrieving the data
+        retrieved_piece = MusicPiece.query.filter_by(title="Moonlight Sonata").first()
+        assert retrieved_piece is not None
+        assert retrieved_piece.composer == "Beethoven"
+        assert retrieved_piece.subtitle == "Quasi una fantasia"
+        assert retrieved_piece.popular is True
+        assert retrieved_piece.recommended is False
 
 
-def test_database_update(app):
-    """Test database update functionality."""
+# Test UPDATE operation
+def test_update_music_piece(app):
     with app.app_context():
-        # Perform update operations and assertions here
-        assert True
+        # Create initial piece
+        piece = MusicPiece(
+            title="Original Title",
+            composer="Mozart",
+            genre="Chamber",
+            subtitle="Old Subtitle",
+            popular=False,
+            recommended=False,
+        )
+        db.session.add(piece)
+        db.session.commit()
+
+        # Update multiple fields
+        piece.title = "New Title"
+        piece.subtitle = "New Subtitle"
+        piece.popular = True
+        db.session.commit()
+
+        # Verify updates were saved
+        updated_piece = MusicPiece.query.get(piece.id)
+        assert updated_piece.title == "New Title"
+        assert updated_piece.subtitle == "New Subtitle"
+        assert updated_piece.popular is True
 
 
-def test_database_delete(app):
-    """Test database delete functionality."""
+# Test DELETE operation
+def test_delete_music_piece(app):
     with app.app_context():
-        # Perform delete operations and assertions here
-        assert True
+        # Create a piece to delete
+        piece = MusicPiece(
+            title="To Delete",
+            composer="Bach",
+            genre="Choral",
+            subtitle="Test",
+            popular=True,
+            recommended=True,
+        )
+        db.session.add(piece)
+        db.session.commit()
+
+        # Delete the piece
+        db.session.delete(piece)
+        db.session.commit()
+
+        # Verify piece was deleted
+        deleted_piece = MusicPiece.query.get(piece.id)
+        assert deleted_piece is None
+
+
+# Test CLI command for creating database tables
+def test_create_all(app):
+    with app.app_context():
+        create_all()
+        # Verify table exists in database
+        assert MusicPiece.__table__.exists(db.engine)
+
+
+# Test CLI command for dropping database tables
+def test_drop_all(app):
+    with app.app_context():
+        create_all()
+        drop_all()
+        # Verify table was dropped
+        assert not MusicPiece.__table__.exists(db.engine)
+
+
+# Test CLI command for populating initial data
+def test_populate(app):
+    with app.app_context():
+        create_all()
+        populate()
+
+        # Verify both initial pieces were added
+        pieces = MusicPiece.query.all()
+        assert len(pieces) == 2
+
+        # Check Beethoven piece details
+        beethoven_piece = MusicPiece.query.filter_by(
+            composer="Ludwig van Beethoven"
+        ).first()
+        assert beethoven_piece.title == "PLACEHOLDER Sonata No. 14"
+        assert beethoven_piece.subtitle == "Moonlight Sonata"
+        assert beethoven_piece.popular is True
+
+        # Check Bach piece details
+        bach_piece = MusicPiece.query.filter_by(
+            composer="Johann Sebastian Bach"
+        ).first()
+        assert bach_piece.title == "PLACEHOLDER obscure piece"
+        assert bach_piece.recommended is False
