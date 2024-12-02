@@ -77,10 +77,10 @@ jobs:
           python-version: 3.12
       - name: unit_test1
         run: pip install -r requirements.txt
-      - name: Install pytest
+      - name: Run tests
         run: |
-          pytest unit_testing/api_test.py
-          pytest unit_testing/database_test.py
+          pytest api_test.py
+          pytest database_test.py
 
   deploy-to-impaas:
     needs: unit-testing
