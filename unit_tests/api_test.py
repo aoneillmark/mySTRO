@@ -26,7 +26,10 @@ def test_open_opus_composer_api():
 def test_open_opus_work_api():
     """Test OpenOpus works list API."""
     composer_id = "145"  # Mozart's ID
-    url = "https://api.openopus.org/work/list/composer/" f"{composer_id}/genre/all.json"
+    url = (
+        "https://api.openopus.org/work/list/composer/"
+        f"{composer_id}/genre/all.json"
+    )
     response = requests.get(url)
 
     assert response.status_code == 200
@@ -97,7 +100,8 @@ def test_gemini_api_music_description():
     # Check if response contains key elements
     assert any(
         word in response.text.lower()
-        for word in [test_piece["title"].lower(), test_piece["composer"].lower()]
+        for word in [test_piece["title"].lower(),
+                     test_piece["composer"].lower()]
     )
 
 
@@ -224,7 +228,10 @@ def test_youtube_search_url_special_characters():
 @pytest.mark.skip(reason="API key required")
 def test_weather_api_invalid_key():
     """Test Weather API with invalid key."""
-    url = "http://api.weatherapi.com/v1/current.json?" "key=invalid_key&q=London&aqi=no"
+    url = (
+        "http://api.weatherapi.com/v1/current.json?"
+        "key=invalid_key&q=London&aqi=no"
+    )
     response = requests.get(url)
     assert response.status_code == 401  # Unauthorized
 
@@ -238,4 +245,6 @@ def test_gemini_api_invalid_key():
         model.generate_content("Test prompt")  # Removed response assignment
         assert False, "Should have raised an error"
     except Exception as e:
-        assert "API key" in str(e).lower() or "authentication" in str(e).lower()
+        assert (
+            "API key" in str(e).lower() or "authentication" in str(e).lower()
+        )
