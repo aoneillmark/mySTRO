@@ -12,6 +12,7 @@ A Flask-based web application that recommends classical music based on weather c
 ## Components
 
 - **`app.py`**: The main entry point of the application, handling the core logic and routing.
+- **`cli.py`**: Responsible for the population of the database.
 - **`Blueprint/`**: Contains the blueprint for organizing the library management functionalities.
   - **`library.py`**: Manages user music pieces and library operations.
 - **`database/`**: Handles database initialization and connections.
@@ -100,7 +101,7 @@ pytest database_test.py
 ```
 ## CI/CD
 The project uses GitHub Actions for continuous integration and deployment, including:
-- Code formatting checks (flake8)
+- Code formatting checks (black)
 - Automated testing
 - Database migration
 - Deployment to ImPaaS
