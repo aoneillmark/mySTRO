@@ -46,7 +46,7 @@ def test_create_music_piece(app):
 
 # Test READ operation
 def test_read_music_piece(app):
-    with (app.app_context()):
+    with app.app_context():
         # Add test data
         piece = MusicPiece(
             title="Moonlight Sonata",
@@ -68,6 +68,7 @@ def test_read_music_piece(app):
         assert retrieved_piece.subtitle == "Quasi una fantasia"
         assert retrieved_piece.popular is True
         assert retrieved_piece.recommended is False
+
 
 # Test DELETE operation
 def test_delete_music_piece(app):
