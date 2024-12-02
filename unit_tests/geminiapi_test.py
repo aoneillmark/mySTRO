@@ -11,9 +11,10 @@ from unittest.mock import Mock, patch
 load_dotenv()
 GOOGLE_API_KEY = os.getenv("GOOGLE_API_KEY")
 
+
 def test_gemini_api_music_description():
-    #Test Gemini API for music description generation.
-    with patch('google.generativeai.GenerativeModel') as mock_genai:
+    # Test Gemini API for music description generation.
+    with patch("google.generativeai.GenerativeModel") as mock_genai:
         # Create mock response
         mock_model = Mock()
         mock_response = Mock()
@@ -51,9 +52,10 @@ def test_gemini_api_music_description():
         assert "Beethoven" in response.text
         assert "Symphony No. 5" in response.text
 
+
 def test_gemini_api_weather_suggestion():
-    #Test Gemini API for weather-based music suggestions.
-    with patch('google.generativeai.GenerativeModel') as mock_genai:
+    # Test Gemini API for weather-based music suggestions.
+    with patch("google.generativeai.GenerativeModel") as mock_genai:
         # Create mock response
         mock_model = Mock()
         mock_response = Mock()
@@ -91,9 +93,10 @@ def test_gemini_api_weather_suggestion():
         assert "Pastoral Symphony" in response.text
         assert "serene, peaceful mood" in response.text
 
+
 def test_gemini_api_error_handling():
-    #Test Gemini API error handling.
-    with patch('google.generativeai.GenerativeModel') as mock_genai:
+    # Test Gemini API error handling.
+    with patch("google.generativeai.GenerativeModel") as mock_genai:
         # Setup mock to raise an exception
         mock_model = Mock()
         mock_model.generate_content.side_effect = Exception("API Error")
@@ -112,22 +115,23 @@ def test_gemini_api_error_handling():
 
         with pytest.raises(Exception) as exc_info:
             model.generate_content(prompt)
-        
+
         assert "API Error" in str(exc_info.value)
 
+
 def test_gemini_api_prompt_formatting():
-    #Test prompt formatting for Gemini API.
+    # Test prompt formatting for Gemini API.
     test_cases = [
         {
             "weather": {"desc": "Sunny", "temp": 25},
             "composers": ["Mozart", "Beethoven"],
-            "expected_keywords": ["Sunny", "25°C", "Mozart", "Beethoven"]
+            "expected_keywords": ["Sunny", "25°C", "Mozart", "Beethoven"],
         },
         {
             "weather": {"desc": "Rainy", "temp": 15},
             "composers": ["Bach", "Chopin"],
-            "expected_keywords": ["Rainy", "15°C", "Bach", "Chopin"]
-        }
+            "expected_keywords": ["Rainy", "15°C", "Bach", "Chopin"],
+        },
     ]
 
     for case in test_cases:

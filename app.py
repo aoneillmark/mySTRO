@@ -9,20 +9,25 @@ import Blueprint as blueprints
 from cli import create_all, drop_all, populate
 from flask_session import Session
 
+
 def create_app(testing=False):
     # Initialize Flask application
-    app = Flask(__name__, template_folder="src/templates", static_folder="src/static")
+    app = Flask(
+        __name__, template_folder="src/templates", static_folder="src/static"
+    )
 
     if testing:
         # Set up test configuration
-        app.config.update({
-            'TESTING': True,
-            'SECRET_KEY': 'test_key',
-            'SQLALCHEMY_DATABASE_URI': 'sqlite:///:memory:',
-            'SQLALCHEMY_TRACK_MODIFICATIONS': False,
-            'WEATHER_API_KEY': 'test_key',
-            'GOOGLE_API_KEY': 'test_key'
-        })
+        app.config.update(
+            {
+                "TESTING": True,
+                "SECRET_KEY": "test_key",
+                "SQLALCHEMY_DATABASE_URI": "sqlite:///:memory:",
+                "SQLALCHEMY_TRACK_MODIFICATIONS": False,
+                "WEATHER_API_KEY": "test_key",
+                "GOOGLE_API_KEY": "test_key",
+            }
+        )
         database.init_app(app)
         app.register_blueprint(blueprints.library)
         register_routes(app)
@@ -30,13 +35,15 @@ def create_app(testing=False):
 
     # Set up production configuration
     load_dotenv()
-    app.config.update({
-        "SQLALCHEMY_DATABASE_URI": "sqlite:///mystro.db",
-        "SQLALCHEMY_TRACK_MODIFICATIONS": False,
-        "WEATHER_API_KEY": os.getenv("WEATHER_API_KEY"),
-        "GOOGLE_API_KEY": os.getenv("GOOGLE_API_KEY"),
-        "SESSION_TYPE": "filesystem"
-    })
+    app.config.update(
+        {
+            "SQLALCHEMY_DATABASE_URI": "sqlite:///mystro.db",
+            "SQLALCHEMY_TRACK_MODIFICATIONS": False,
+            "WEATHER_API_KEY": os.getenv("WEATHER_API_KEY"),
+            "GOOGLE_API_KEY": os.getenv("GOOGLE_API_KEY"),
+            "SESSION_TYPE": "filesystem",
+        }
+    )
 
     genai.configure(api_key=app.config["GOOGLE_API_KEY"])
     Session(app)
@@ -53,6 +60,7 @@ def create_app(testing=False):
     register_routes(app)
     return app
 
+
 def register_routes(app):
     # Define routes and corresponding functions
     @app.route("/")
@@ -63,21 +71,32 @@ def register_routes(app):
     def form():
         composers = []
         error = None
-        
+
         try:
-            composers_url = "https://api.openopus.org/composer/list/name/all.json"
+            composers_url = (
+                "https://api.openopus.org/composer/list/name/all.json"
+            )
             response = requests.get(composers_url)
             response.raise_for_status()  # Raise exception for bad status codes
-            
+
             data = response.json()
             composers = data.get("composers", [])
         except (requests.RequestException, ValueError) as e:
             error = "Failed to fetch composers"
             print(f"Error fetching composers: {e}")
 
-        genres = ["Keyboard", "Orchestral", "Chamber", "Stage", "Choral", "Opera", "Vocal"]
-        return render_template("form.html", composers=composers, genres=genres, error=error)
-
+        genres = [
+            "Keyboard",
+            "Orchestral",
+            "Chamber",
+            "Stage",
+            "Choral",
+            "Opera",
+            "Vocal",
+        ]
+        return render_template(
+            "form.html", composers=composers, genres=genres, error=error
+        )
 
     @app.route("/weather-mood")
     def weather_mood():
@@ -90,11 +109,15 @@ def register_routes(app):
         try:
             weather_response = requests.get(weather_url)
             weather_data = (
-                weather_response.json() if weather_response.status_code == 200 else None
+                weather_response.json()
+                if weather_response.status_code == 200
+                else None
             )
 
             if weather_data:
-                composers_url = "https://api.openopus.org/composer/list/pop.json"
+                composers_url = (
+                    "https://api.openopus.org/composer/list/pop.json"
+                )
                 composers_response = requests.get(composers_url)
                 composers = []
 
@@ -108,7 +131,9 @@ def register_routes(app):
                 weather_desc = weather_condition.get("text", "")
                 temp = weather_current.get("temp_c", 0)
 
-                composer_names = [composer.get("complete_name") for composer in composers]
+                composer_names = [
+                    composer.get("complete_name") for composer in composers
+                ]
                 model = genai.GenerativeModel("gemini-pro")
 
                 prompt = (
@@ -186,11 +211,17 @@ def register_routes(app):
             else:
                 return render_template("noresults.html")
 
-        unique_composers = sorted(list(set(work["composer_name"] for work in all_works)))
+        unique_composers = sorted(
+            list(set(work["composer_name"] for work in all_works))
+        )
 
         return render_template(
-            "results.html", name=name, works=all_works, composers=unique_composers
+            "results.html",
+            name=name,
+            works=all_works,
+            composers=unique_composers,
         )
+
 
 # Only create production app if running directly
 if __name__ == "__main__":

@@ -1,5 +1,6 @@
 from database import db
 
+
 # Setup of MusicPiece Class
 class MusicPiece(db.Model):
     __tablename__ = "music_pieces"
@@ -14,7 +15,11 @@ class MusicPiece(db.Model):
     recommended = db.Column(db.Boolean, nullable=False)
 
     # Checking for unique entries
-    __table_args__ = (db.UniqueConstraint("composer", "title", "subtitle", name="unique_music_piece"),)
+    __table_args__ = (
+        db.UniqueConstraint(
+            "composer", "title", "subtitle", name="unique_music_piece"
+        ),
+    )
 
     # String representation
     def __repr__(self):
