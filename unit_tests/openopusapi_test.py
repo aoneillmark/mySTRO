@@ -26,7 +26,11 @@ def test_form_route_composers_success(client):
     with requests_mock.Mocker() as mock:
         mock.get(
             "https://api.openopus.org/composer/list/name/all.json",
-            json={"composers": [{"id": 1, "name": "Mozart", "epoch": "Classical"}]},
+            json={
+                "composers": [
+                    {"id": 1, "name": "Mozart", "epoch": "Classical"}
+                ]
+            },
         )
         response = client.get("/form")
         assert response.status_code == 200
@@ -38,7 +42,8 @@ def test_form_route_composers_success(client):
 def test_form_route_composers_failure(client):
     with requests_mock.Mocker() as mock:
         mock.get(
-            "https://api.openopus.org/composer/list/name/all.json", status_code=500
+            "https://api.openopus.org/composer/list/name/all.json",
+            status_code=500,
         )
         response = client.get("/form")
         assert response.status_code == 200
@@ -69,7 +74,11 @@ def test_search_works_integration(client):
             },
         )
 
-        form_data = {"composer_id": ["1"], "name": "Mozart", "genres": ["Orchestral"]}
+        form_data = {
+            "composer_id": ["1"],
+            "name": "Mozart",
+            "genres": ["Orchestral"],
+        }
         response = client.post("/search", data=form_data)
         assert response.status_code == 200
         # Check for the presence of the work details

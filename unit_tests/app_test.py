@@ -1,11 +1,10 @@
 import sys
 import os
-
-sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-
 import pytest
 import requests_mock
 from app import create_app
+
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 
 # Fixture to create testing Flask app instance
@@ -51,7 +50,10 @@ def test_form_route_basic(client):
 def test_search_validation_errors(client):
     # Define test cases with expected error messages
     test_cases = [
-        ({"genres": ["Orchestral"]}, b"No composer selected"),  # Missing composer_id
+        (
+            {"genres": ["Orchestral"]},
+            b"No composer selected",
+        ),  # Missing composer_id
         (
             {"composer_id": ["1"], "name": "Mozart"},  # Missing genres
             b"No genres selected",

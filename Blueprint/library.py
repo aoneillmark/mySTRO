@@ -14,19 +14,27 @@ def all_pieces():
     user_name = request.args.get("user_name")
 
     if not user_name:
-        return render_template("library.html", pieces=[], username_missing=True)
+        return render_template(
+            "library.html", pieces=[], username_missing=True
+        )
 
     user = User.query.filter_by(username=user_name).first()
 
     if not user:
         return render_template(
-            "library.html", pieces=[], username_missing=False, user_name=user_name
+            "library.html",
+            pieces=[],
+            username_missing=False,
+            user_name=user_name,
         )
 
     user_pieces = [entry.music_piece for entry in user.library]
 
     return render_template(
-        "library.html", pieces=user_pieces, username_missing=False, user_name=user_name
+        "library.html",
+        pieces=user_pieces,
+        username_missing=False,
+        user_name=user_name,
     )
 
 
@@ -70,11 +78,15 @@ def add_piece():
         user_id=user.id, music_piece_id=music_piece.id
     ).first()
     if not existing_entry:
-        user_library_entry = UserLibrary(user_id=user.id, music_piece_id=music_piece.id)
+        user_library_entry = UserLibrary(
+            user_id=user.id, music_piece_id=music_piece.id
+        )
         db.session.add(user_library_entry)
         db.session.commit()
     else:
-        print(f"Music piece '{title}' by '{composer}' is already in the library.")
+        print(
+            f"Music piece '{title}' by '{composer}' is already in the library."
+        )
 
     # Redirect to user's library
     return redirect(url_for("library.all_pieces", user_name=user_name))
@@ -106,14 +118,19 @@ def single_piece(piece_id):
         user_id=user.id, music_piece_id=piece_id
     ).first()
 
-    if request.method == "POST" and request.form.get("submit_button") == "delete":
+    if (
+        request.method == "POST"
+        and request.form.get("submit_button") == "delete"
+    ):
         if user_library_entry:
             db.session.delete(user_library_entry)
             db.session.commit()
             delete_orphaned_music_pieces()
         return redirect(url_for("library.all_pieces", user_name=user_name))
 
-    return render_template("library_piece.html", piece=user_library_entry.music_piece)
+    return render_template(
+        "library_piece.html", piece=user_library_entry.music_piece
+    )
 
 
 # Route to display the library form and handle composer and genre selection
@@ -121,12 +138,24 @@ def single_piece(piece_id):
 def library_form():
     # Fetch the list of composers from the OpenOpus API
     try:
-        response = request.get("https://api.openopus.org/composer/list/name/all.json")
-        composers = response.json()["composers"] if response.status_code == 200 else []
+        response = request.get(
+            "https://api.openopus.org/composer/list/name/all.json"
+        )
+        composers = (
+            response.json()["composers"] if response.status_code == 200 else []
+        )
     except Exception:
         composers = []
 
     # Define the list of genres
-    genres = ["Keyboard", "Orchestral", "Chamber", "Stage", "Choral", "Opera", "Vocal"]
+    genres = [
+        "Keyboard",
+        "Orchestral",
+        "Chamber",
+        "Stage",
+        "Choral",
+        "Opera",
+        "Vocal",
+    ]
 
     return render_template("form.html", composers=composers, genres=genres)
