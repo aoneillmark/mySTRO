@@ -4,41 +4,40 @@ A Flask-based web application that recommends classical music based on weather c
 
 ## Features
 
-- **Weather-Based Music Suggestions**: Uses AI to recommend classical pieces based on current weather conditions
-- **Composer Search**: Browse and search through a comprehensive database of classical composers
+- **Composer Search**: Browse and search through a comprehensive database of classical composers using OpenOpus API integration
 - **Genre Filtering**: Filter music pieces by different genres (Keyboard, Orchestral, Chamber, etc.)
-- **Library Management**: Organise and maintain your personal classical music collection
-- **OpenOpus API Integration**: Access a vast database of classical music works and composers
+- **Library Database Management**: Organise and maintain your personal classical music collection, individual to each user
+- **AI Powered Weather-Based Music Suggestions**: Uses Gemini AI to recommend classical pieces based on current weather conditions
 
 ## Components
 
-### Core Application
-- `app.py`: Main application file
-- `cli.py`: Command-line interface utilities
-- `Blueprint/library.py`: Library blueprint for music management
-- `models/musicpiece.py`: Music piece data model
-
-### Database
-- `database/__init__.py`: Database initialization
-- `instance/mystro.db`: SQLite database file
-
-### Testing
-- `api_test.py`: API testing suite
-- `database_test.py`: Database testing suite
-- `test_youtube.py`: YouTube integration tests
-
-### Configuration
-- `.github/workflows/build.yml`: CI/CD pipeline configuration
-- `tailwind.config.js`: Tailwind CSS configuration
-- `pyproject.toml`: Python project configuration
-- `Procfile`: Process file for deployment
-- `requirements.txt`: Python dependencies
+- **`app.py`**: The main entry point of the application, handling the core logic and routing.
+- **`Blueprint/`**: Contains the blueprint for organizing the library management functionalities.
+  - **`library.py`**: Manages user music pieces and library operations.
+- **`database/`**: Handles database initialization and connections.
+- **`unit_tests/`**: Contains unit tests for various components of the application.
+  - **`api_test.py`**: Tests for API integrations such as Google Gemini, OpenOpus, and Weather APIs.
+  - **`database_test.py`**: Tests for database operations including creation, population, and CRUD operations.
+  - **`email_test.py`**: Tests for email sharing functionality.
+  - **`twitter_test.py`**: Tests for Twitter sharing functionality.
+- **`templates/`**: Contains HTML templates for rendering views.
+  - **`index.html`**: The main landing page of the application.
+  - **`form.html`**: The form page for user input.
+  - **`library.html`**: The library page displaying the user's music collection.
+  - **`about.html`**: The about page with information about the application.
+- **`models/`**: Defines the data models used in the application.
+  - **`musicpiece.py`**: Contains the `MusicPiece` model which represents a music piece in the library.
+- **`instance/`**: Holds instance-specific database.
+- **`static/`**: Contains static image files and CSS styling.
+- **`tailwind.config.js`**: Configuration file for Tailwind CSS.
+- **`requirements.txt`**: Lists the Python dependencies required for the project.
+- **`package.json`**: Lists the Node.js dependencies required for the project.
+- **`Procfile`**: Defines the commands to run the application on impaas.
 
 ## Prerequisites
 
 - Python 3.12
 - Node.js (for Tailwind CSS)
-- Flask
 - Google Gemini API key
 - Weather API key
 

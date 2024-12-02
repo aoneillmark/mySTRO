@@ -1,6 +1,8 @@
 from flask import Blueprint, render_template, redirect, url_for, request
 from database import db
 from models.musicpiece import MusicPiece
+from models.user import User
+from models.userlibrary import UserLibrary
 
 # Define the Blueprint for the library
 library = Blueprint("library", __name__, url_prefix="/library")
@@ -8,18 +10,17 @@ library = Blueprint("library", __name__, url_prefix="/library")
 
 @library.route("/", methods=["GET"])
 def all_pieces():
-    """
-    Display all music pieces in the user's library.
-    """
     user_name = request.args.get("user_name")
     if not user_name:
-        # No username provided, render a form to input username
         return render_template("library.html", pieces=[], username_missing=True)
 
-    user_pieces = (
-        db.session.query(MusicPiece).filter_by(user_name=user_name).all()
-    )  # Advanced query
+    user = User.query.filter_by(username=user_name).first()
+    if not user:
+        return render_template("library.html", pieces=[], username_missing=False, user_name=user_name)
+
+    user_pieces = [entry.music_piece for entry in user.library]
     return render_template("library.html", pieces=user_pieces, username_missing=False, user_name=user_name)
+
 
 
 
@@ -36,17 +37,28 @@ def add_piece():
     popular = request.form.get("popular") == "true"
     recommended = request.form.get("recommended") == "true"
 
-    new_piece = MusicPiece(
-        user_name=user_name,
-        composer=composer,
-        title=title,
-        subtitle=subtitle,
-        genre=genre,
-        popular=popular,
-        recommended=recommended,
-    )
+    user = User.query.filter_by(username=user_name).first()
+    if not user:
+        user = User(username=user_name)
+        db.session.add(user)
+        db.session.commit()
 
-    db.session.add(new_piece)
+    music_piece = MusicPiece.query.filter_by(composer=composer, title=title, subtitle=subtitle).first()
+    if not music_piece:
+        music_piece = MusicPiece(
+            composer=composer,
+            title=title,
+            subtitle=subtitle,
+            genre=genre,
+            popular=popular,
+            recommended=recommended,
+        )
+        db.session.add(music_piece)
+        db.session.commit()
+
+    # Link user to music piece
+    user_library_entry = UserLibrary(user_id=user.id, music_piece_id=music_piece.id)
+    db.session.add(user_library_entry)
     db.session.commit()
 
     return redirect(url_for("library.all_pieces", user_name=user_name))

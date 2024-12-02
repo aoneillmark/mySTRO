@@ -3,128 +3,50 @@
 {% block title %}Select a Composer{% endblock %}
 
 {% block content %}
-<div class="bg-linen p-10">
-    <main class="mt-10 mx-auto" style="max-width: 800px;">
-        <h2 class="text-3xl text-center mb-8 text-dark-purple">Welcome to MySTRO</h2>
+<div class="min-h-screen flex items-center justify-center bg-linen">
+  <div class="bg-white p-10 rounded-lg shadow-lg w-full max-w-lg">
+    <h1 class="text-3xl font-bold text-pumpkin mb-4">MySTRO</h1>
+    <p class="text-battleship-gray mb-6">Find your favorite classical music pieces and composers.</p>
 
-        <form action="/search" method="POST" class="mx-auto">
-            <!-- Name Field -->
-            <div class="mb-6">
-                <label for="namefield" class="block text-lg mb-2" style="color: #333;">Name:</label>
-                <input type="text"
-                       id="namefield"
-                       name="name"
-                       placeholder="Enter a memorable username!"
-                       class="w-full p-2 rounded whitespace-nowrap overflow-visible"
-                       style="border: 1px solid #D2691E; background-color: white; width: 100%;"
-                       required>
-            </div>
+    <h2 class="text-2xl font-bold text-pumpkin mb-6">Composer Selection</h2>
+    <form action="/search" method="POST" class="space-y-6">
+      <div>
+        <label for="namefield" class="block text-lg mb-2 text-dark-purple">Your Name</label>
+        <input type="text" id="namefield" name="name" placeholder="Enter your username" class="w-full p-3 border border-pumpkin rounded bg-white" required>
+      </div>
 
-            <!-- Composer Selection -->
-            <div class="mb-6">
-                <label for="composer_id" class="block text-lg mb-2" style="color: #333;">Choose Composers:</label>
-                <select id="composer_id"
-                        name="composer_id"
-                        multiple
-                        class="w-full p-2 rounded"
-                        style="border: 1px solid #D2691E; height: 200px; background-color: white;"
-                        required>
-                    {% for composer in composers %}
-                        <option value="{{ composer['id'] }}" class="py-1">{{ composer['name'] }} ({{ composer['epoch'] }})</option>
-                    {% endfor %}
-                </select>
-                <p class="text-sm mt-1" style="color: #666;">Hold Ctrl/Cmd to select multiple non-consecutive composers</p>
-            </div>
+      <div>
+        <label for="composer_id" class="block text-lg mb-2 text-dark-purple">Choose Composers</label>
+        <select id="composer_id" name="composer_id" multiple class="w-full p-3 border border-pumpkin rounded bg-white h-40" required>
+          {% for composer in composers %}
+          <option value="{{ composer['id'] }}">{{ composer['name'] }} ({{ composer['epoch'] }})</option>
+          {% endfor %}
+        </select>
+        <p class="text-sm text-battleship-gray mt-2">Hold Ctrl/Cmd to select multiple composers.</p>
+      </div>
 
-            <!-- Genre Selection -->
-            <div class="mb-6">
-                <label for="genres" class="block text-lg mb-2" style="color: #333;">Choose Genres:</label>
-                <select id="genres"
-                        name="genres"
-                        multiple
-                        class="w-full p-2 rounded"
-                        style="border: 1px solid #D2691E; height: 200px; background-color: white;"
-                        required>
-                    {% for genre in genres %}
-                        <option value="{{ genre }}" class="py-1">{{ genre }}</option>
-                    {% endfor %}
-                </select>
-                <p class="text-sm mt-1" style="color: #666;">Hold Ctrl/Cmd to select multiple non-consecutive genres</p>
-            </div>
+      <div>
+        <label for="genres" class="block text-lg mb-2 text-dark-purple">Choose Genres</label>
+        <select id="genres" name="genres" multiple class="w-full p-3 border border-pumpkin rounded bg-white h-40" required>
+          {% for genre in genres %}
+          <option value="{{ genre }}">{{ genre }}</option>
+          {% endfor %}
+        </select>
+        <p class="text-sm text-battleship-gray mt-2">Hold Ctrl/Cmd to select multiple genres.</p>
+      </div>
 
-            <!-- Submit Button -->
-            <button type="submit"
-                class="w-full py-3 px-4 rounded text-white font-bold"
-                style="background-color: #8B4513; transition: background-color 0.2s ease;">
-                Submit
-            </button>
-        </form>
-    </main>
+      <button type="submit" class="w-full bg-pumpkin text-white py-3 rounded font-bold hover:bg-dark-purple">Submit</button>
+    </form>
+
+    <div class="mt-6">
+      <a href="/" class="inline-block text-pumpkin border border-pumpkin px-6 py-2 rounded hover:bg-pumpkin hover:text-white">Go Back</a>
+    </div>
+  </div>
 </div>
 
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const selects = document.querySelectorAll('select[multiple]');
-
-        selects.forEach(select => {
-            select.addEventListener('mousedown', function(e) {
-                e.preventDefault();
-                const option = e.target;
-                const isCtrlPressed = e.ctrlKey || e.metaKey;
-
-                if (isCtrlPressed) {
-                    // Toggle selection when Ctrl/Cmd is pressed
-                    option.selected = !option.selected;
-                } else {
-                    // Clear previous selections and select current
-                    Array.from(this.options).forEach(opt => opt.selected = false);
-                    option.selected = true;
-                }
-                this.dispatchEvent(new Event('change'));
-            });
-
-            select.addEventListener('keydown', function(e) {
-                if ((e.ctrlKey || e.metaKey) && e.key === ' ') {
-                    const focusedOption = this.options[this.selectedIndex];
-                    focusedOption.selected = !focusedOption.selected;
-                    e.preventDefault();
-                }
-            });
-        });
-    });
+  if (window.history.replaceState) {
+    window.history.replaceState(null, null, window.location.href);
+  }
 </script>
-
-<style>
-    select[multiple] {
-        user-select: none;
-    }
-    select[multiple] option:active,
-    select[multiple] option:focus {
-        background-color: #FFDAB9 !important;
-        color: #8B4513;
-    }
-    select[multiple]::-webkit-scrollbar {
-        width: 8px;
-    }
-    select[multiple]::-webkit-scrollbar-track {
-        background: #FFF5E6;
-        border-radius: 4px;
-    }
-    select[multiple]::-webkit-scrollbar-thumb {
-        background: #D2691E;
-        border-radius: 4px;
-    }
-    select[multiple]::-webkit-scrollbar-thumb:hover {
-        background: #8B4513;
-    }
-    input:focus, select:focus {
-        outline: none;
-        border-color: #8B4513;
-        box-shadow: 0 0 0 2px rgba(139, 69, 19, 0.2);
-    }
-    button[type="submit"]:hover {
-        background-color: #D2691E;
-        cursor: pointer;
-    }
-</style>
 {% endblock %}

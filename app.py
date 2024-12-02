@@ -92,10 +92,22 @@ def register_routes(app):
         composers = []
 
         if response.status_code == 200:
-            composers_data = response.json()
-            composers = composers_data.get("composers", [])
-        else:
-            return f"Failed to fetch composers. Status Code: {response.status_code}"
+            data = response.json()
+            composer_works = data.get("works", [])
+            filtered_works = [
+                {
+                    "title": work.get("title", ""),
+                    "genre": work.get("genre", ""),
+                    "subtitle": work.get("subtitle", ""),
+                    "popular": work.get("popular") == "1",
+                    "recommended": work.get("recommended") == "1",
+                    "composer_name": composer_name,
+                    "composer_id": composer_id,
+                }
+                for work in composer_works
+                if work.get("genre") in selected_genres
+            ]
+            all_works.extend(filtered_works)
 
         genres = ["Keyboard", "Orchestral", "Chamber", "Stage", "Choral", "Opera", "Vocal"]
         return render_template("form.html", composers=composers, genres=genres)
