@@ -198,6 +198,17 @@ def search():
         "results.html", name=name, works=all_works, composers=unique_composers
     )
 
+@library.route('/add_piece', methods=['POST'])
+def add_piece():
+    composer = request.form.get('composer')
+    title = request.form.get('title')
+    opus_number = request.form.get('opus_number')
+    
+    # Add piece to database logic here
+    
+    flash('Piece added to your library!', 'success')
+    return redirect(url_for('weather.index'))
+
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=8000, debug=True)
