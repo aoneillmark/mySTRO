@@ -2,13 +2,13 @@ import pytest
 import requests
 import os
 import urllib.parse
-from dotenv import load_dotenv
-import google.generativeai as genai
-import requests_mock
+# from dotenv import load_dotenv
+# import google.generativeai as genai
+# import requests_mock
 
 
 # Load environment variables
-load_dotenv()
+# load_dotenv()
 WEATHER_API_KEY = os.getenv("WEATHER_API_KEY")
 GOOGLE_API_KEY = os.getenv("GOOGLE_API_KEY")
 
@@ -72,9 +72,10 @@ def test_weather_api():
     except requests.RequestException as e:
         pytest.skip(f"Weather API request failed: {str(e)}")
 
+
 """
 def test_gemini_api_music_description():
-    """Test Gemini API for music description generation."""
+    Test Gemini API for music description generation.
     with requests_mock.Mocker() as m:
         m.post((
             f"https://generativelanguage.googleapis.com/"
@@ -115,7 +116,7 @@ def test_gemini_api_music_description():
 
 """
 def test_gemini_api_weather_suggestion():
-    """Test Gemini API for weather-based music suggestions."""
+    Test Gemini API for weather-based music suggestions.
     with requests_mock.Mocker() as m:
         m.post((
             f"https://generativelanguage.googleapis.com/"
@@ -156,6 +157,7 @@ def test_gemini_api_weather_suggestion():
         assert "Pastoral Symphony" in response.text
         assert "serene, peaceful mood" in response.text
 """
+
 
 def test_youtube_search_url():
     """Test YouTube search URL generation and accessibility."""
@@ -228,10 +230,10 @@ def test_youtube_search_url_special_characters():
     # Verify URL encoding
     assert urllib.parse.unquote(encoded_query) == search_query
 
-
+"""
 @pytest.mark.skip(reason="API key required")
 def test_weather_api_invalid_key():
-    """Test Weather API with invalid key."""
+    Test Weather API with invalid key.
     url = "http://api.weatherapi.com/v1/current.json?key=invalid_key&q=London&aqi=no"
     response = requests.get(url)
     assert response.status_code == 401  # Unauthorized
@@ -239,7 +241,7 @@ def test_weather_api_invalid_key():
 
 @pytest.mark.skip(reason="API key required")
 def test_gemini_api_invalid_key():
-    """Test Gemini API with invalid key."""
+    Test Gemini API with invalid key.
     with requests_mock.Mocker() as m:
         m.post((
             f"https://generativelanguage.googleapis.com/"
@@ -255,3 +257,4 @@ def test_gemini_api_invalid_key():
             assert False, "Should have raised an error"
         except Exception as e:
             assert "Invalid API key" in str(e)
+"""
