@@ -71,17 +71,14 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      - name: List files
-        run: |
-          pwd
-          ls -la
       - name: Setup Python
         uses: actions/setup-python@v4
         with:
           python-version: 3.12
-      - name: unit_test1
+      - name: Install requirements
         run: pip install -r requirements.txt
       - name: Run tests
+        working-directory: ./unit_testing
         run: |
           pytest api_test.py
           pytest database_test.py
