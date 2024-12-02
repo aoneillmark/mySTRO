@@ -8,13 +8,13 @@ import google.generativeai as genai
 import Blueprint as blueprints
 from cli import create_all, drop_all, populate
 from flask_session import Session
-    
+
 def create_app(testing=False):
     # Initialize Flask application
     app = Flask(__name__, template_folder="src/templates", static_folder="src/static")
-    
+
     if testing:
-        # Test configuration
+        # Set up test configuration
         app.config.update({
             'TESTING': True,
             'SECRET_KEY': 'test_key',
@@ -24,13 +24,11 @@ def create_app(testing=False):
             'GOOGLE_API_KEY': 'test_key'
         })
         database.init_app(app)
-        app.register_blueprint(blueprints.library)  # Add this line
+        app.register_blueprint(blueprints.library)
         register_routes(app)
         return app
-        
-    # Rest of your code...
-        
-    # Production configuration
+
+    # Set up production configuration
     load_dotenv()
     app.config.update({
         "SQLALCHEMY_DATABASE_URI": "sqlite:///mystro.db",
@@ -39,32 +37,7 @@ def create_app(testing=False):
         "GOOGLE_API_KEY": os.getenv("GOOGLE_API_KEY"),
         "SESSION_TYPE": "filesystem"
     })
-    
-    genai.configure(api_key=app.config["GOOGLE_API_KEY"])
-    Session(app)
-    database.init_app(app)
-    app.register_blueprint(blueprints.library)
 
-    # Register CLI commands
-    with app.app_context():
-        app.cli.add_command(create_all)
-        app.cli.add_command(drop_all)
-        app.cli.add_command(populate)
-        click.echo("CLI commands registered")
-
-    register_routes(app)
-    return app
-        
-    # Production configuration
-    load_dotenv()
-    app.config.update({
-        "SQLALCHEMY_DATABASE_URI": "sqlite:///mystro.db",
-        "SQLALCHEMY_TRACK_MODIFICATIONS": False,
-        "WEATHER_API_KEY": os.getenv("WEATHER_API_KEY"),
-        "GOOGLE_API_KEY": os.getenv("GOOGLE_API_KEY"),
-        "SESSION_TYPE": "filesystem"
-    })
-    
     genai.configure(api_key=app.config["GOOGLE_API_KEY"])
     Session(app)
     database.init_app(app)
@@ -81,16 +54,18 @@ def create_app(testing=False):
     return app
 
 def register_routes(app):
+    # Define routes and corresponding functions
     @app.route("/")
     def hello_world():
         return render_template("about.html")
 
     @app.route("/form", methods=["GET", "POST"])
     def form():
+        # Fetch composer and genre data
         composers_url = "https://api.openopus.org/composer/list/name/all.json"
         response = requests.get(composers_url)
         composers = []
-        all_works = []  # Initialize all_works here
+        all_works = []
 
         if response.status_code == 200:
             data = response.json()
@@ -115,6 +90,7 @@ def register_routes(app):
 
     @app.route("/weather-mood")
     def weather_mood():
+        # Fetch weather data and generate classical music suggestion
         weather_url = (
             "http://api.weatherapi.com/v1/current.json"
             f"?key={app.config['WEATHER_API_KEY']}&q=London&aqi=no"
@@ -144,27 +120,11 @@ def register_routes(app):
                 composer_names = [composer.get("complete_name") for composer in composers]
                 model = genai.GenerativeModel("gemini-pro")
 
-                weather_part = f"Given that it's {weather_desc} and {temp}°C"
-                location_part = "in London today,"
-                request_part = (
-                    "suggest a classical music piece that "
-                    "would complement "
-                    "this weather."
-                )
-                composer_part = (
-                    "Consider selecting from works by these composers: "
-                    f"{', '.join(composer_names)}."
-                )
-                instruction_part = (
-                    "Explain briefly why this piece fits "
-                    "the current weather "
-                    "and mood."
-                )
-                ending_part = "Keep your response concise but engaging."
-
                 prompt = (
-                    f"{weather_part} {location_part} {request_part} "
-                    f"{composer_part} {instruction_part} {ending_part}"
+                    f"Given that it's {weather_desc} and {temp}°C in London today, "
+                    "suggest a classical music piece that would complement this weather. "
+                    f"Consider selecting from works by these composers: {', '.join(composer_names)}. "
+                    "Explain briefly why this piece fits the current weather and mood. Keep your response concise but engaging."
                 )
 
                 response = model.generate_content(prompt)
@@ -183,6 +143,7 @@ def register_routes(app):
 
     @app.route("/search", methods=["POST"])
     def search():
+        # Handle search functionality
         selected_composer_ids = request.form.getlist("composer_id")
         name = request.form.get("name")
         selected_genres = request.form.getlist("genres")
@@ -240,7 +201,7 @@ def register_routes(app):
             "results.html", name=name, works=all_works, composers=unique_composers
         )
 
-# Only create the production app if running directly
+# Only create production app if running directly
 if __name__ == "__main__":
     app = create_app()
     app.run(host="0.0.0.0", port=8000, debug=True)

@@ -6,15 +6,18 @@ import pytest
 import requests_mock
 from app import create_app
 
+# Create test Flask app instance with in-memory SQLite database
 @pytest.fixture
 def app():
     test_app = create_app(testing=True)
     return test_app
 
+# Create test client for the Flask app
 @pytest.fixture
 def client(app):
     return app.test_client()
 
+# Test form route with successful composer fetch
 def test_form_route_composers_success(client):
     with requests_mock.Mocker() as mock:
         mock.get(
@@ -26,8 +29,7 @@ def test_form_route_composers_success(client):
         assert b'Mozart' in response.data
         assert b'Classical' in response.data
 
-# ... rest of your tests ...
-
+# Test the form route with failed composer fetch
 def test_form_route_composers_failure(client):
     with requests_mock.Mocker() as mock:
         mock.get(
@@ -38,6 +40,7 @@ def test_form_route_composers_failure(client):
         assert response.status_code == 200
         assert b"Failed to fetch composers" in response.data
 
+# Test search functionality with mocked API responses
 def test_search_works_integration(client):
     with requests_mock.Mocker() as mock:
         # Mock composer details endpoint

@@ -5,7 +5,7 @@ import urllib.parse
 import requests_mock
 
 def test_youtube_search_url():
-    """Test YouTube search URL generation and accessibility."""
+    #Test URL generation and accessibility
     test_piece = {
         "composer_name": "Mozart",
         "title": "Symphony No. 40",
@@ -33,7 +33,7 @@ def test_youtube_search_url():
     assert test_piece["subtitle"] in urllib.parse.unquote(url)
 
 def test_youtube_search_url_no_subtitle():
-    """Test YouTube search URL generation without subtitle."""
+    # Test URL generation without subtitle
     test_piece = {"composer_name": "Beethoven", "title": "Symphony No. 5"}
 
     search_query = f"{test_piece['composer_name']} {test_piece['title']}"
@@ -53,7 +53,7 @@ def test_youtube_search_url_no_subtitle():
     assert test_piece["title"] in urllib.parse.unquote(url)
 
 def test_youtube_search_url_special_characters():
-    """Test YouTube search URL generation with special characters."""
+    # Test URL generation with special characters
     test_piece = {
         "composer_name": "Dvořák",
         "title": "Symphony No. 9",
@@ -77,8 +77,7 @@ def test_youtube_search_url_special_characters():
     assert urllib.parse.unquote(encoded_query) == search_query
 
 def test_youtube_search_url_encoding():
-    """Test URL encoding and decoding functionality."""
-    # Test with various special characters and spaces
+    # Test URL encoding and decoding functionality
     test_pieces = [
         {
             "composer_name": "Johann Sebastian Bach",
@@ -106,5 +105,5 @@ def test_youtube_search_url_encoding():
         decoded_query = urllib.parse.unquote(encoded_query)
 
         assert decoded_query == search_query
-        assert ' ' not in encoded_query  # Spaces should be encoded
-        assert '%20' in encoded_query  # Spaces should become %20
+        assert ' ' not in encoded_query
+        assert '%20' in encoded_query
