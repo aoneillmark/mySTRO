@@ -13,7 +13,9 @@ def all_pieces():
     """
     user_name = request.args.get("user_name")
     # all_pieces = db.session.query(MusicPiece).all()
-    user_pieces = db.session.query(MusicPiece).filter_by(user_name=user_name).all() # Advanced query
+    user_pieces = (
+        db.session.query(MusicPiece).filter_by(user_name=user_name).all()
+    )  # Advanced query
     return render_template("library.html", pieces=user_pieces)
 
 
@@ -72,12 +74,8 @@ def library_form():
     User can search for music pieces based on selected criteria.
     """
     try:
-        response = request.get(
-            "https://api.openopus.org/composer/list/name/all.json"
-        )
-        composers = (
-            response.json()["composers"] if response.status_code == 200 else []
-        )
+        response = request.get("https://api.openopus.org/composer/list/name/all.json")
+        composers = response.json()["composers"] if response.status_code == 200 else []
     except Exception:
         composers = []
 
