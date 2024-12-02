@@ -46,7 +46,7 @@ def test_create_music_piece(app):
 
 # Test READ operation
 def test_read_music_piece(app):
-    with (app.app_context()):
+    with app.app_context():
         # Add test data
         piece = MusicPiece(
             title="Moonlight Sonata",
@@ -60,13 +60,13 @@ def test_read_music_piece(app):
         db.session.commit()
 
         # Test retrieving the data
-        retrieved_piece = MusicPiece.query.filter_by(
-            title="Moonlight Sonata").first()
+        retrieved_piece = MusicPiece.query.filter_by(title="Moonlight Sonata").first()
         assert retrieved_piece is not None
         assert retrieved_piece.composer == "Beethoven"
         assert retrieved_piece.subtitle == "Quasi una fantasia"
         assert retrieved_piece.popular is True
         assert retrieved_piece.recommended is False
+
 
 # Test DELETE operation
 def test_delete_music_piece(app):
