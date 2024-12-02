@@ -87,31 +87,23 @@ def register_routes(app):
 
     @app.route("/form", methods=["GET", "POST"])
     def form():
-        composers_url = "https://api.openopus.org/composer/list/name/all.json"
-        response = requests.get(composers_url)
         composers = []
-        all_works = []  # Initialize all_works here
-
-        if response.status_code == 200:
+        error = None
+        
+        try:
+            composers_url = "https://api.openopus.org/composer/list/name/all.json"
+            response = requests.get(composers_url)
+            response.raise_for_status()  # Raise exception for bad status codes
+            
             data = response.json()
-            composer_works = data.get("works", [])
-            filtered_works = [
-                {
-                    "title": work.get("title", ""),
-                    "genre": work.get("genre", ""),
-                    "subtitle": work.get("subtitle", ""),
-                    "popular": work.get("popular") == "1",
-                    "recommended": work.get("recommended") == "1",
-                    "composer_name": composer_name,
-                    "composer_id": composer_id,
-                }
-                for work in composer_works
-                if work.get("genre") in selected_genres
-            ]
-            all_works.extend(filtered_works)
+            composers = data.get("composers", [])
+        except (requests.RequestException, ValueError) as e:
+            error = "Failed to fetch composers"
+            print(f"Error fetching composers: {e}")
 
         genres = ["Keyboard", "Orchestral", "Chamber", "Stage", "Choral", "Opera", "Vocal"]
-        return render_template("form.html", composers=composers, genres=genres)
+        return render_template("form.html", composers=composers, genres=genres, error=error)
+
 
     @app.route("/weather-mood")
     def weather_mood():
