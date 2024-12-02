@@ -98,7 +98,6 @@ Run the test suite using:
 ```bash
 pytest api_test.py
 pytest database_test.py
-pytest test_youtube.py
 ```
 ## CI/CD
 The project uses GitHub Actions for continuous integration and deployment, including:
