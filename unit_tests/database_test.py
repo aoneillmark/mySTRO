@@ -19,8 +19,8 @@ def app():
     """Create test Flask application with in-memory SQLite database."""
     flask_app = Flask(__name__)
     # Use in-memory SQLite for test isolation
-    flask_app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///:memory:'
-    flask_app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+    flask_app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///:memory:"
+    flask_app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
     db.init_app(flask_app)
 
     with flask_app.app_context():
@@ -44,7 +44,7 @@ def test_create_music_piece(app):
             genre="Orchestral",
             subtitle="Fate",
             popular=True,
-            recommended=True
+            recommended=True,
         )
         db.session.add(piece)
         db.session.commit()
@@ -65,7 +65,6 @@ def test_create_music_piece(app):
         assert user.library[0].music_piece_id == piece.id
 
 
-
 def test_read_music_piece(app):
     """Test retrieving a music piece from database."""
     with app.app_context():
@@ -81,7 +80,7 @@ def test_read_music_piece(app):
             genre="Piano",
             subtitle="Quasi una fantasia",
             popular=True,
-            recommended=False
+            recommended=False,
         )
         db.session.add(piece)
         db.session.commit()
@@ -115,7 +114,7 @@ def test_update_music_piece(app):
             genre="Chamber",
             subtitle="Old Subtitle",
             popular=False,
-            recommended=False
+            recommended=False,
         )
         db.session.add(piece)
         db.session.commit()
@@ -145,7 +144,9 @@ def delete_orphaned_music_pieces():
     orphaned_pieces = (
         db.session.query(MusicPiece)
         .outerjoin(UserLibrary, MusicPiece.id == UserLibrary.music_piece_id)
-        .filter(UserLibrary.music_piece_id == None)  # Find music pieces with no references
+        .filter(
+            UserLibrary.music_piece_id == None
+        )  # Find music pieces with no references
         .all()
     )
 
@@ -153,7 +154,7 @@ def delete_orphaned_music_pieces():
         db.session.delete(piece)
 
     db.session.commit()
-    
+
 
 def test_delete_music_piece(app):
     """Test removing a music piece from a user's library."""
@@ -171,7 +172,7 @@ def test_delete_music_piece(app):
             genre="Classical",
             subtitle="Subtitle",
             popular=True,
-            recommended=False
+            recommended=False,
         )
         db.session.add(piece)
         db.session.commit()

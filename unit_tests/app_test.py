@@ -34,8 +34,15 @@ def test_form_route_basic(client):
     assert response.status_code == 200
 
     # Check if all expected genres are present in the response
-    expected_genres = [b"Keyboard", b"Orchestral", b"Chamber",
-                       b"Stage", b"Choral", b"Opera", b"Vocal"]
+    expected_genres = [
+        b"Keyboard",
+        b"Orchestral",
+        b"Chamber",
+        b"Stage",
+        b"Choral",
+        b"Opera",
+        b"Vocal",
+    ]
     for genre in expected_genres:
         assert genre in response.data
 
@@ -44,14 +51,11 @@ def test_form_route_basic(client):
 def test_search_validation_errors(client):
     # Define test cases with expected error messages
     test_cases = [
-        (
-            {"genres": ["Orchestral"]},  # Missing composer_id
-            b"No composer selected"
-        ),
+        ({"genres": ["Orchestral"]}, b"No composer selected"),  # Missing composer_id
         (
             {"composer_id": ["1"], "name": "Mozart"},  # Missing genres
-            b"No genres selected"
-        )
+            b"No genres selected",
+        ),
     ]
 
     # Run test cases and assert the expected error messages
