@@ -69,6 +69,22 @@ def add_piece():
     return redirect(url_for("library.all_pieces", user_name=user_name))
 
 
+def delete_orphaned_music_pieces():
+    """
+    Delete any MusicPiece records that are not referenced by any UserLibrary entry.
+    """
+    orphaned_pieces = (
+        db.session.query(MusicPiece)
+        .outerjoin(UserLibrary, MusicPiece.id == UserLibrary.music_piece_id)
+        .filter(UserLibrary.music_piece_id == None)  # Find music pieces with no references
+        .all()
+    )
+
+    for piece in orphaned_pieces:
+        db.session.delete(piece)
+
+    db.session.commit()
+
 
 @library.route("/<int:piece_id>", methods=["GET", "POST"])
 def single_piece(piece_id):
