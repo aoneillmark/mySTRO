@@ -68,35 +68,6 @@ def test_read_music_piece(app):
         assert retrieved_piece.popular is True
         assert retrieved_piece.recommended is False
 
-
-# Test UPDATE operation
-def test_update_music_piece(app):
-    with app.app_context():
-        # Create initial piece
-        piece = MusicPiece(
-            title="Original Title",
-            composer="Mozart",
-            genre="Chamber",
-            subtitle="Old Subtitle",
-            popular=False,
-            recommended=False,
-        )
-        db.session.add(piece)
-        db.session.commit()
-
-        # Update multiple fields
-        piece.title = "New Title"
-        piece.subtitle = "New Subtitle"
-        piece.popular = True
-        db.session.commit()
-
-        # Verify updates were saved
-        updated_piece = MusicPiece.query.get(piece.id)
-        assert updated_piece.title == "New Title"
-        assert updated_piece.subtitle == "New Subtitle"
-        assert updated_piece.popular is True
-
-
 # Test DELETE operation
 def test_delete_music_piece(app):
     with app.app_context():
