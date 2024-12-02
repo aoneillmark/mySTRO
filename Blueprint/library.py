@@ -64,23 +64,48 @@ def add_piece():
     return redirect(url_for("library.all_pieces", user_name=user_name))
 
 
+def delete_orphaned_music_pieces():
+    """
+    Delete any MusicPiece records that are not referenced by any UserLibrary entry.
+    """
+    orphaned_pieces = (
+        db.session.query(MusicPiece)
+        .outerjoin(UserLibrary, MusicPiece.id == UserLibrary.music_piece_id)
+        .filter(UserLibrary.music_piece_id == None)  # Find music pieces with no references
+        .all()
+    )
+
+    for piece in orphaned_pieces:
+        db.session.delete(piece)
+
+    db.session.commit()
+
+
 @library.route("/<int:piece_id>", methods=["GET", "POST"])
 def single_piece(piece_id):
     """
-    View or delete a single music piece.
+    View or remove a single music piece from a user's library.
     """
-    music_piece = db.get_or_404(
-        MusicPiece, piece_id, description="Music piece not found."
-    )
+    user_name = request.form.get("user_name")
+    user = User.query.filter_by(username=user_name).first()
+    if not user:
+        return "User not found", 404
 
-    if request.method == "POST":
-        # Handle delete action
-        if request.form.get("submit_button") == "delete":
-            db.session.delete(music_piece)
+    user_library_entry = UserLibrary.query.filter_by(user_id=user.id, music_piece_id=piece_id).first()
+
+    if request.method == "POST" and request.form.get("submit_button") == "delete":
+        if user_library_entry:
+            # Remove the entry from the user's library
+            db.session.delete(user_library_entry)
             db.session.commit()
-            return redirect(url_for("library.all_pieces"))
 
-    return render_template("library_piece.html", piece=music_piece)
+            # Delete orphaned music pieces
+            delete_orphaned_music_pieces()
+
+        return redirect(url_for("library.all_pieces", user_name=user_name))
+
+    return render_template("library_piece.html", piece=user_library_entry.music_piece)
+
 
 
 @library.route("/form", methods=["GET", "POST"])

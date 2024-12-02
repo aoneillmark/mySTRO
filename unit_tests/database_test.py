@@ -138,37 +138,70 @@ def test_update_music_piece(app):
         assert updated_piece.popular is True
 
 
+def delete_orphaned_music_pieces():
+    """
+    Delete any MusicPiece records that are not referenced by any UserLibrary entry.
+    """
+    orphaned_pieces = (
+        db.session.query(MusicPiece)
+        .outerjoin(UserLibrary, MusicPiece.id == UserLibrary.music_piece_id)
+        .filter(UserLibrary.music_piece_id == None)  # Find music pieces with no references
+        .all()
+    )
+
+    for piece in orphaned_pieces:
+        db.session.delete(piece)
+
+    db.session.commit()
+    
 
 def test_delete_music_piece(app):
-    """Test deleting a music piece."""
+    """Test removing a music piece from a user's library."""
     with app.app_context():
-        # Create a test user
-        user = User(username="test_user")
-        db.session.add(user)
+        # Create two users
+        user1 = User(username="user1")
+        user2 = User(username="user2")
+        db.session.add_all([user1, user2])
         db.session.commit()
 
         # Create and save a new music piece
         piece = MusicPiece(
-            title="To Delete",
-            composer="Bach",
-            genre="Choral",
-            subtitle="Test",
+            title="Shared Piece",
+            composer="Mozart",
+            genre="Classical",
+            subtitle="Subtitle",
             popular=True,
-            recommended=True
+            recommended=False
         )
         db.session.add(piece)
         db.session.commit()
 
-        # Link the user and the music piece
-        user_library = UserLibrary(user_id=user.id, music_piece_id=piece.id)
-        db.session.add(user_library)
+        # Link the music piece to both users
+        user1_library = UserLibrary(user_id=user1.id, music_piece_id=piece.id)
+        user2_library = UserLibrary(user_id=user2.id, music_piece_id=piece.id)
+        db.session.add_all([user1_library, user2_library])
         db.session.commit()
 
-        # Delete the music piece
-        db.session.delete(piece)
+        # Remove the music piece from user1's library
+        db.session.delete(user1_library)
         db.session.commit()
 
-        # Verify deletion
+        # Verify the music piece still exists in the database
+        retrieved_piece = db.session.get(MusicPiece, piece.id)
+        assert retrieved_piece is not None
+
+        # Verify the music piece is still in user2's library
+        remaining_library = UserLibrary.query.filter_by(user_id=user2.id).all()
+        assert len(remaining_library) == 1
+        assert remaining_library[0].music_piece_id == piece.id
+
+        # Remove the music piece from user2's library
+        db.session.delete(user2_library)
+        db.session.commit()
+
+        # Call the cleanup function explicitly
+        delete_orphaned_music_pieces()
+
+        # Verify the music piece is deleted from the database
         deleted_piece = db.session.get(MusicPiece, piece.id)
         assert deleted_piece is None
-
