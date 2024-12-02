@@ -80,6 +80,7 @@ jobs:
       - name: Run tests
         working-directory: ./unit_tests
         run: |
+          export PYTHONPATH=$PYTHONPATH:$(pwd)/..
           pytest api_test.py
           pytest database_test.py
 
