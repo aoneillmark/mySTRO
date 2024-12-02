@@ -5,81 +5,62 @@
 {% block content %}
 <div class="bg-linen p-10">
     <h1 class="text-3xl font-bold text-pumpkin">My Library</h1>
-    <p class="text-battleship-gray mt-4">Here are your saved classical pieces.</p>
+    {% if username_missing %}
+        <p class="text-red-500 mt-4">Please enter your username to view your library.</p>
+    {% endif %}
 
-    <div class="search-box">
-        <div>
-            <label for="namefield" class="block text-lg mb-2" style="color: #333;">Name:</label>
-            <input type="text"
-                   id="namefield"
-                   name="name"
-                   placeholder="Enter a memorable username!"
-                   class="w-full p-2 rounded whitespace-nowrap overflow-visible"
-                   style="border: 1px solid #D2691E; background-color: white; width: 100%; min-width: 250px;"
-                   required>
-        </div>
+    <!-- Username Form -->
+    <div class="flex items-center gap-4">
+        <span class="font-medium">Username:</span>
+        <form 
+            id="username-form" 
+            method="GET" 
+            action="{{ url_for('library.all_pieces') }}" 
+            class="ml-4"
+        >
+            <input 
+                type="text" 
+                name="user_name" 
+                class="username-input border rounded px-3 py-2 focus:ring-2 focus:ring-pumpkin focus:outline-none" 
+                placeholder="Enter username here..." 
+                value="{{ user_name if user_name else '' }}" 
+                required
+            >
+        </form>
+    </div>
 
-        <span>Search:</span>
+    <!-- Search Box -->
+    <div class="flex items-center gap-4">
+        <span class="font-medium">Search:</span>
         <input 
             type="text" 
-            class="search-input" 
+            class="search-input border rounded px-3 py-2 focus:ring-2 focus:ring-pumpkin focus:outline-none" 
             placeholder="Search by title..." 
             oninput="debouncedSearch(this.value)"
         >
-        
-        <div class="flex" style="gap: 4px; margin-left: auto;">
-            <!-- Email Share -->
-            <a 
-                href="mailto:?subject=My Classical Music Collection on MySTRO&body=Hi!%0D%0A%0D%0ACheck out my classical music collection on MySTRO. Here are some pieces I've saved:%0D%0A%0D%0A{% for piece in pieces %}• {{ piece.composer }}: {{ piece.title }}{% if piece.opus_number %} ({{ piece.opus_number }}){% endif %}%0D%0A{% endfor %}%0D%0A%0D%0AYou can explore more classical music at MySTRO!%0D%0A"
-                class="inline-flex items-center px-6 py-2 text-white shadow-lg hover:bg-[#458F00] font-medium transition-colors"
-                style="background-color: #3DA200; font-size: 16px; letter-spacing: 0.5px; margin-right: 24px; border-radius: 20px;"
-            >
-                📧 Email
-            </a>
-        
-            <!-- Twitter Share -->
-            <a 
-                href="https://twitter.com/intent/tweet?text=Classical music gems on MySTRO 🎵"
-                target="_blank"
-                rel="noopener noreferrer"
-                class="inline-flex items-center px-6 py-2 text-white shadow-lg hover:bg-[#458F00] font-medium transition-colors"
-                style="background-color: #3DA200; font-size: 16px; letter-spacing: 0.5px; border-radius: 20px;"
-            >
-                🐦 Tweet
-            </a>
-        </div>
     </div>
 
     <ul class="mt-6">
         {% if pieces %}
             {% for piece in pieces %}
             <li class="work-item"
-            data-title="{{ piece.title }}"
-            data-composer="{{ piece.composer }}">
-            <div class="composer-name">{{ piece.composer }}</div>
-            <div class="work-info">
-                <strong class="work-title">{{ piece.title }}</strong>
-                {% if piece.opus_number %}
-                    <em>({{ piece.opus_number }})</em>
-                {% endif %}
-            </div>
-            <div class="badges">
-                {% if piece.opus_number %}
-                    <span class="badge opus">Opus {{ piece.opus_number }}</span>
-                {% endif %}
-            </div>
-            <a href="https://www.youtube.com/results?search_query={{ piece.composer }}+{{ piece.title }}"
-               class="action-button youtube-button"
-               target="_blank"
-               title="Search on YouTube">▶</a>
-            <a href="{{ url_for('library.single_piece', piece_id=piece.id) }}"
-               class="action-button"
-               title="View Details">👁</a>
-            <form method="POST" action="{{ url_for('library.single_piece', piece_id=piece.id) }}" style="margin: 0;">
-                <input type="hidden" name="submit_button" value="delete">
-                <button type="submit" class="action-button" title="Delete from Library">−</button>
-            </form>
-        </li>
+                data-title="{{ piece.title }}"
+                data-composer="{{ piece.composer }}">
+                <div class="composer-name">{{ piece.composer }}</div>
+                <div class="work-info">
+                    <strong class="work-title">{{ piece.title }}</strong>
+                    {% if piece.opus_number %}
+                        <em>({{ piece.opus_number }})</em>
+                    {% endif %}
+                </div>
+                <a href="https://www.youtube.com/results?search_query={{ piece.composer }}+{{ piece.title }}"
+                   class="action-button youtube-button"
+                   target="_blank"
+                   title="Search on YouTube">▶</a>
+                <a href="{{ url_for('library.single_piece', piece_id=piece.id) }}"
+                   class="action-button"
+                   title="View Details">👁</a>
+            </li>
             {% endfor %}
         {% else %}
             <li class="no-results">No pieces in the library yet.</li>
@@ -90,7 +71,7 @@
 <script>
     function debounce(func, wait) {
         let timeout;
-        return function(...args) {
+        return function (...args) {
             clearTimeout(timeout);
             timeout = setTimeout(() => func.apply(this, args), wait);
         };
@@ -103,23 +84,12 @@
         works.forEach(work => {
             const title = work.dataset.title.toLowerCase();
             const composer = work.dataset.composer.toLowerCase();
-            const titleElement = work.querySelector('.work-title');
-
             const shouldShow = title.includes(searchTerm) || composer.includes(searchTerm);
-            work.style.display = shouldShow ? 'grid' : 'none';
-
-            if (searchTerm && shouldShow) {
-                const regex = new RegExp(`(${searchTerm})`, 'gi');
-                titleElement.innerHTML = titleElement.textContent.replace(
-                    regex,
-                    '<span class="highlight">$1</span>'
-                );
-            } else {
-                titleElement.innerHTML = titleElement.textContent;
-            }
+            work.style.display = shouldShow ? 'block' : 'none';
         });
     }
 
     const debouncedSearch = debounce(searchLibrary, 200);
 </script>
+
 {% endblock %}
