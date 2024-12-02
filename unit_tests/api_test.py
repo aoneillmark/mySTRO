@@ -5,7 +5,6 @@ import urllib.parse
 from dotenv import load_dotenv
 import google.generativeai as genai
 
-
 # Load environment variables
 load_dotenv()
 WEATHER_API_KEY = os.getenv("WEATHER_API_KEY")
