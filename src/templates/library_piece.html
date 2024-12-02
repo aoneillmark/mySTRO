@@ -17,8 +17,9 @@
             </p>
             <form method="POST" action="{{ url_for('library.single_piece', piece_id=piece.id) }}" class="mt-6">
                 <input type="hidden" name="submit_button" value="delete">
+                <input type="hidden" name="user_name" value="{{ request.args.get('user_name') }}">
                 <button type="submit" class="text-penn-red hover:text-dark-purple">Delete</button>
-            </form>
+            </form>            
         </div>
     </div>
     <footer class="text-center mt-6">

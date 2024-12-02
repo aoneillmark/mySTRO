@@ -52,7 +52,7 @@
                    class="action-button youtube-button"
                    target="_blank"
                    title="Search on YouTube">▶</a>
-                <a href="{{ url_for('library.single_piece', piece_id=piece.id) }}"
+                <a href="{{ url_for('library.single_piece', piece_id=piece.id) }}?user_name={{ user_name }}"
                    class="action-button"
                    title="View Details">👁</a>
             </li>

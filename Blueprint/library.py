@@ -78,21 +78,25 @@ def delete_orphaned_music_pieces():
 # Route to view or remove a single music piece from a user's library
 @library.route("/<int:piece_id>", methods=["GET", "POST"])
 def single_piece(piece_id):
-   user_name = request.form.get("user_name")
-   user = User.query.filter_by(username=user_name).first()
-   if not user:
-       return "User not found", 404
+    user_name = request.args.get("user_name") or request.form.get("user_name")
+    if not user_name:
+        return "User not found", 404
 
-   user_library_entry = UserLibrary.query.filter_by(user_id=user.id, music_piece_id=piece_id).first()
+    user = User.query.filter_by(username=user_name).first()
+    if not user:
+        return "User not found", 404
 
-   if request.method == "POST" and request.form.get("submit_button") == "delete":
-       if user_library_entry:
-           db.session.delete(user_library_entry)
-           db.session.commit()
-           delete_orphaned_music_pieces()
-       return redirect(url_for("library.all_pieces", user_name=user_name))
+    user_library_entry = UserLibrary.query.filter_by(user_id=user.id, music_piece_id=piece_id).first()
 
-   return render_template("library_piece.html", piece=user_library_entry.music_piece)
+    if request.method == "POST" and request.form.get("submit_button") == "delete":
+        if user_library_entry:
+            db.session.delete(user_library_entry)
+            db.session.commit()
+            delete_orphaned_music_pieces()
+        return redirect(url_for("library.all_pieces", user_name=user_name))
+
+    return render_template("library_piece.html", piece=user_library_entry.music_piece)
+
 
 # Route to display the library form and handle composer and genre selection
 @library.route("/form", methods=["GET", "POST"])
