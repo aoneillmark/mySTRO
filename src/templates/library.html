@@ -19,12 +19,13 @@
             class="ml-4"
         >
             <input 
-                type="text" 
-                name="user_name" 
-                class="username-input border rounded px-3 py-2 focus:ring-2 focus:ring-pumpkin focus:outline-none" 
-                placeholder="Enter username here..." 
-                value="{{ user_name if user_name else '' }}" 
-                required
+               type="text"
+               name="user_name"
+               class="username-input border rounded px-3 py-2 focus:ring-2 focus:ring-pumpkin focus:outline-none whitespace-nowrap overflow-visible"
+               style="min-width: 250px; width: 100%;"
+               placeholder="Enter username here..."
+               value="{{ user_name if user_name else '' }}"
+               required
             >
         </form>
     </div>
