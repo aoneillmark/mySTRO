@@ -46,7 +46,7 @@ def test_create_music_piece(app):
 
 # Test READ operation
 def test_read_music_piece(app):
-    with (app.app_context()):
+    with app.app_context():
         # Add test data
         piece = MusicPiece(
             title="Moonlight Sonata",

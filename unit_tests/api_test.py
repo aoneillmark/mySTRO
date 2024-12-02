@@ -6,10 +6,12 @@ from dotenv import load_dotenv
 import google.generativeai as genai
 import requests_mock
 
+
 # Load environment variables
 load_dotenv()
 WEATHER_API_KEY = os.getenv("WEATHER_API_KEY")
 GOOGLE_API_KEY = os.getenv("GOOGLE_API_KEY")
+
 
 def test_open_opus_composer_api():
     """Test OpenOpus composer list API."""
@@ -22,13 +24,10 @@ def test_open_opus_composer_api():
     assert isinstance(data["composers"], list)
     assert len(data["composers"]) > 0
 
+
 def test_open_opus_work_api():
     """Test OpenOpus works list API."""
-    composer_id = "145"  # Mozart's ID
-    url = (
-        "https://api.openopus.org/work/list/composer/"
-        f"{composer_id}/genre/all.json"
-    )
+    url = "https://api.openopus.org/work/list/composer/145/genre/all.json"
     response = requests.get(url)
 
     assert response.status_code == 200
@@ -37,6 +36,7 @@ def test_open_opus_work_api():
     assert isinstance(data["works"], list)
     assert len(data["works"]) > 0
 
+
 def test_weather_api():
     """Test Weather API functionality."""
     if not WEATHER_API_KEY:
@@ -44,7 +44,7 @@ def test_weather_api():
 
     url = (
         f"http://api.weatherapi.com/v1/current.json?"
-        f"key={WEATHER_API_KEY}&q=London&aqi=no"
+        f"key={WEATHER_API_KEY}&q=London&aqi=no)"
     )
 
     try:
@@ -72,19 +72,24 @@ def test_weather_api():
     except requests.RequestException as e:
         pytest.skip(f"Weather API request failed: {str(e)}")
 
+
 def test_gemini_api_music_description():
     """Test Gemini API for music description generation."""
     with requests_mock.Mocker() as m:
-        m.post('https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent',
-              json={
-                  'content': "Beethoven's Symphony No. 5 is a groundbreaking work that exemplifies the composer's profound musical genius. The piece's majestic themes and dramatic shifts in mood capture the full range of human emotion, from triumphant heroism to deep introspection."
-              })
+        m.post((
+            f"https://generativelanguage.googleapis.com/"
+            f"v1beta/models/gemini-pro:generateContent"),
+            json={
+                "content": "Beethoven's Symphony No. 5 is a groundbreaking work that"
+                " exemplifies the composer's profound musical genius. The piece's"
+                " majestic themes and dramatic shifts in mood capture the full range"
+                " of human emotion, from triumphant heroism to deep introspection."
+            },
+        )
 
-        # Run the test
         genai.configure(api_key=GOOGLE_API_KEY)
         model = genai.GenerativeModel("gemini-pro")
 
-        # Test piece info
         test_piece = {
             "title": "Symphony No. 5",
             "composer": "Beethoven",
@@ -107,13 +112,22 @@ def test_gemini_api_music_description():
         assert "Beethoven" in response.text
         assert "Symphony No. 5" in response.text
 
+
 def test_gemini_api_weather_suggestion():
     """Test Gemini API for weather-based music suggestions."""
     with requests_mock.Mocker() as m:
-        m.post('https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent',
-              json={
-                  'content': "Suggested classical music piece: Beethoven's 'Pastoral Symphony'. This piece captures the serene, peaceful mood of a sunny day with its flowing melodies and pastoral themes."
-              })
+        m.post((
+            f"https://generativelanguage.googleapis.com/"
+            f"v1beta/models/gemini-pro:generateContent"),
+            json={
+                "content": f"Suggested classical music piece: "
+                f"Beethoven's 'Pastoral Symphony'. "
+                f"This piece captures the serene, "
+                f"peaceful mood of a sunny day with"
+                f" its flowing melodies and "
+                f"pastoral themes."
+            },
+        )
 
         genai.configure(api_key=GOOGLE_API_KEY)
         model = genai.GenerativeModel("gemini-pro")
@@ -141,16 +155,15 @@ def test_gemini_api_weather_suggestion():
         assert "Pastoral Symphony" in response.text
         assert "serene, peaceful mood" in response.text
 
+
 def test_youtube_search_url():
     """Test YouTube search URL generation and accessibility."""
-    # Test piece info
     test_piece = {
         "composer_name": "Mozart",
         "title": "Symphony No. 40",
         "subtitle": "in G minor",
     }
 
-    # Build search query like in the template
     search_query = (
         f"{test_piece['composer_name']} {test_piece['title']} "
         f"{test_piece.get('subtitle', '')}"
@@ -170,11 +183,11 @@ def test_youtube_search_url():
     assert test_piece["title"] in urllib.parse.unquote(url)
     assert test_piece["subtitle"] in urllib.parse.unquote(url)
 
+
 def test_youtube_search_url_no_subtitle():
     """Test YouTube search URL generation without subtitle."""
     test_piece = {"composer_name": "Beethoven", "title": "Symphony No. 5"}
 
-    # Build search query without subtitle
     search_query = f"{test_piece['composer_name']} {test_piece['title']}"
     encoded_query = urllib.parse.quote(search_query)
 
@@ -190,6 +203,7 @@ def test_youtube_search_url_no_subtitle():
     assert test_piece["composer_name"] in urllib.parse.unquote(url)
     assert test_piece["title"] in urllib.parse.unquote(url)
 
+
 def test_youtube_search_url_special_characters():
     """Test YouTube search URL generation with special characters."""
     test_piece = {
@@ -198,7 +212,6 @@ def test_youtube_search_url_special_characters():
         "subtitle": "From the New World",
     }
 
-    # Build search query
     search_query = (
         f"{test_piece['composer_name']} {test_piece['title']} "
         f"{test_piece.get('subtitle', '')}"
@@ -214,23 +227,25 @@ def test_youtube_search_url_special_characters():
     # Verify URL encoding
     assert urllib.parse.unquote(encoded_query) == search_query
 
+
 @pytest.mark.skip(reason="API key required")
 def test_weather_api_invalid_key():
     """Test Weather API with invalid key."""
-    url = (
-        "http://api.weatherapi.com/v1/current.json?"
-        "key=invalid_key&q=London&aqi=no"
-    )
+    url = "http://api.weatherapi.com/v1/current.json?key=invalid_key&q=London&aqi=no"
     response = requests.get(url)
     assert response.status_code == 401  # Unauthorized
+
 
 @pytest.mark.skip(reason="API key required")
 def test_gemini_api_invalid_key():
     """Test Gemini API with invalid key."""
     with requests_mock.Mocker() as m:
-        m.post('https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent',
-              status_code=401,
-              json={'error': {'message': 'Invalid API key'}})
+        m.post((
+            f"https://generativelanguage.googleapis.com/"
+            f"v1beta/models/gemini-pro:generateContent"),
+            status_code=401,
+            json={'error': {'message': 'Invalid API key'}},
+        )
 
         try:
             genai.configure(api_key="invalid_key")

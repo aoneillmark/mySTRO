@@ -68,12 +68,8 @@ def library_form():
     User can search for music pieces based on selected criteria.
     """
     try:
-        response = request.get(
-            "https://api.openopus.org/composer/list/name/all.json"
-        )
-        composers = (
-            response.json()["composers"] if response.status_code == 200 else []
-        )
+        response = request.get("https://api.openopus.org/composer/list/name/all.json")
+        composers = response.json()["composers"] if response.status_code == 200 else []
     except Exception:
         composers = []
 
