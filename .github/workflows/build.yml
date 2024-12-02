@@ -86,8 +86,8 @@ jobs:
           pytest twitter_test.py
 
   deploy-to-impaas:
-    needs: build-database
-    runs-on: unit-testing
+    needs: unit-testing
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4
