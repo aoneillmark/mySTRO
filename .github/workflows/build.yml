@@ -65,31 +65,31 @@ jobs:
           flask create_all
           flask populate
 
-unit-testing:
-  needs: build-database
-  runs-on: ubuntu-latest
-  steps:
-    - name: Checkout
-      uses: actions/checkout@v4
-    - name: Debug directory
-      run: |
-        pwd
-        ls -R
-        echo "Current directory contents:"
-        ls -la
-        echo "unit_testing directory contents:"
-        ls -la unit_testing/
-    - name: Setup Python
-      uses: actions/setup-python@v4
-      with:
-        python-version: 3.12
-    - name: Install requirements
-      run: pip install -r requirements.txt
-    - name: Run tests
-      working-directory: ./unit_testing
-      run: |
-        pytest api_test.py
-        pytest database_test.py
+  unit-testing:
+    needs: build-database
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Debug directory
+        run: |
+          pwd
+          ls -R
+          echo "Current directory contents:"
+          ls -la
+          echo "unit_testing directory contents:"
+          ls -la unit_testing/
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.12
+      - name: Install requirements
+        run: pip install -r requirements.txt
+      - name: Run tests
+        working-directory: ./unit_testing
+        run: |
+          pytest api_test.py
+          pytest database_test.py
 
   deploy-to-impaas:
     needs: unit-testing
