@@ -69,7 +69,6 @@ def test_read_music_piece(app):
         assert retrieved_piece.popular is True
         assert retrieved_piece.recommended is False
 
-
 # Test DELETE operation
 def test_delete_music_piece(app):
     with app.app_context():
