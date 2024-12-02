@@ -79,8 +79,8 @@ jobs:
         run: pip install -r requirements.txt
       - name: Install pytest
         run: |
-          pytest api_test.py
-          pytest database_test.py
+          pytest unit_tests/api_test.py
+          pytest unit_tests/database_test.py
 
   deploy-to-impaas:
     needs: unit-testing
