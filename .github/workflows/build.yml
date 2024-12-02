@@ -80,10 +80,14 @@ jobs:
         working-directory: ./unit_tests
         run: |
           export PYTHONPATH=$PYTHONPATH:$(pwd)/..
-          pytest api_test.py
+          pytest app_test.py
+          pytest geminiapi_test.py
+          pytest openopusapi_test.py
+          pytest weatherapi_test.py
           pytest database_test.py
           pytest email_test.py
           pytest twitter_test.py
+          pytest youtube_test.py
 
   deploy-to-impaas:
     needs: unit-testing
