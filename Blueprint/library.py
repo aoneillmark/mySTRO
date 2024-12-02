@@ -11,8 +11,10 @@ def all_pieces():
     """
     Display all music pieces in the user's library.
     """
-    all_pieces = db.session.query(MusicPiece).all()
-    return render_template("library.html", pieces=all_pieces)
+    user_name = request.args.get("user_name")
+    # all_pieces = db.session.query(MusicPiece).all()
+    user_pieces = db.session.query(MusicPiece).filter_by(user_name=user_name).all() # Advanced query
+    return render_template("library.html", pieces=user_pieces)
 
 
 @library.route("/add_piece", methods=["GET", "POST"])
@@ -20,6 +22,7 @@ def add_piece():
     """
     Add a new music piece to the library.
     """
+    user_name = request.form.get("user_name")
     composer = request.form.get("composer_name")
     title = request.form.get("title")
     subtitle = request.form.get("subtitle")
@@ -28,6 +31,7 @@ def add_piece():
     recommended = request.form.get("recommended") == "true"
 
     new_piece = MusicPiece(
+        user_name=user_name,
         composer=composer,
         title=title,
         subtitle=subtitle,
@@ -39,7 +43,7 @@ def add_piece():
     db.session.add(new_piece)
     db.session.commit()
 
-    return redirect(url_for("library.all_pieces"))
+    return redirect(url_for("library.all_pieces", user_name=user_name))
 
 
 @library.route("/<int:piece_id>", methods=["GET", "POST"])

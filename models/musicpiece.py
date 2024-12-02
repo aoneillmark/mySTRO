@@ -4,6 +4,7 @@ from database import db
 class MusicPiece(db.Model):
     __tablename__ = "music_piece"
     id = db.Column(db.Integer, primary_key=True)
+    user_name = db.Column(db.String(80), nullable=False)
     composer = db.Column(db.String(80), nullable=False)
     title = db.Column(db.String(80), nullable=False)
     subtitle = db.Column(db.String(80), nullable=True)

@@ -63,6 +63,7 @@
                       target="_blank" 
                       title="Search on YouTube">▶</a>
                     <form method="POST" action="{{ url_for('library.add_piece') }}">
+                        <input type="hidden" name="user_name" value="{{ name }}">
                         <input type="hidden" name="composer_name" value="{{ work['composer_name'] }}">
                         <input type="hidden" name="title" value="{{ work['title'] }}">
                         <input type="hidden" name="subtitle" value="{{ work.get('subtitle', '') }}">
