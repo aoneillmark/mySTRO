@@ -13,7 +13,9 @@ def all_pieces():
     """
     user_name = request.args.get("user_name")
     # all_pieces = db.session.query(MusicPiece).all()
-    user_pieces = db.session.query(MusicPiece).filter_by(user_name=user_name).all() # Advanced query
+    user_pieces = (
+        db.session.query(MusicPiece).filter_by(user_name=user_name).all()
+    )  # Advanced query
     return render_template("library.html", pieces=user_pieces)
 
 

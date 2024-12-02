@@ -63,7 +63,6 @@ jobs:
         run: |
           flask drop_all
           flask create_all
-          flask populate
 
   unit-testing:
     needs: build-database

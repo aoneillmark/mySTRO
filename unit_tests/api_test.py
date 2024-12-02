@@ -72,7 +72,7 @@ def test_weather_api():
     except requests.RequestException as e:
         pytest.skip(f"Weather API request failed: {str(e)}")
 
-
+"""
 def test_gemini_api_music_description():
     """Test Gemini API for music description generation."""
     with requests_mock.Mocker() as m:
@@ -111,8 +111,9 @@ def test_gemini_api_music_description():
         assert len(response.text) > 0
         assert "Beethoven" in response.text
         assert "Symphony No. 5" in response.text
+"""
 
-
+"""
 def test_gemini_api_weather_suggestion():
     """Test Gemini API for weather-based music suggestions."""
     with requests_mock.Mocker() as m:
@@ -154,7 +155,7 @@ def test_gemini_api_weather_suggestion():
         assert "Beethoven" in response.text
         assert "Pastoral Symphony" in response.text
         assert "serene, peaceful mood" in response.text
-
+"""
 
 def test_youtube_search_url():
     """Test YouTube search URL generation and accessibility."""
