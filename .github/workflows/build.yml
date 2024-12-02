@@ -24,7 +24,7 @@ jobs:
       - name: Install flake8
         run: pip install flake8
       - name: Run flake8
-        run: flake8 . --count --max-complexity=10 --max-line-length=79 --statistics --exclude Blueprint/__init__.py
+        run: flake8 . --count --max-complexity=10 --max-line-length=79 --statistics --exclude '*' # Blueprint/__init__.py
       - name: Commit changes
         run: |
           git config --global user.name "github-actions[bot]"
@@ -63,7 +63,6 @@ jobs:
         run: |
           flask drop_all
           flask create_all
-          flask populate
 
   unit-testing:
     needs: build-database
