@@ -55,10 +55,12 @@ def home():
         composers = (
             composers_data.get("composers", []))  # Fetch composer data
     else:
-        return f"Failed to fetch composers. Status Code: {response.status_code}"
+        return (f"Failed to fetch composers. "
+                f"Status Code: {response.status_code}")
 
     genres = \
-        ["Keyboard", "Orchestral", "Chamber", "Stage", "Choral", "Opera", "Vocal"]
+        ["Keyboard", "Orchestral", "Chamber",
+         "Stage", "Choral", "Opera", "Vocal"]
     return render_template("form.html", composers=composers, genres=genres)
 
 
