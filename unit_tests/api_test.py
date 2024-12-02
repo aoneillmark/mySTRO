@@ -27,7 +27,11 @@ def test_open_opus_composer_api():
 
 def test_open_opus_work_api():
     """Test OpenOpus works list API."""
-    url = "https://api.openopus.org/work/list/composer/145/genre/all.json"
+    composer_id = "145"  # Mozart's ID
+    url = (
+        "https://api.openopus.org/work/list/composer/"
+        f"{composer_id}/genre/all.json"
+    )
     response = requests.get(url)
 
     assert response.status_code == 200
@@ -77,17 +81,12 @@ def test_weather_api():
 def test_gemini_api_music_description():
     Test Gemini API for music description generation.
     with requests_mock.Mocker() as m:
-        m.post((
-            f"https://generativelanguage.googleapis.com/"
-            f"v1beta/models/gemini-pro:generateContent"),
-            json={
-                "content": "Beethoven's Symphony No. 5 is a groundbreaking work that"
-                " exemplifies the composer's profound musical genius. The piece's"
-                " majestic themes and dramatic shifts in mood capture the full range"
-                " of human emotion, from triumphant heroism to deep introspection."
-            },
-        )
+        m.post('https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent',
+              json={
+                  'content': "Beethoven's Symphony No. 5 is a groundbreaking work that exemplifies the composer's profound musical genius. The piece's majestic themes and dramatic shifts in mood capture the full range of human emotion, from triumphant heroism to deep introspection."
+              })
 
+        # Run the test
         genai.configure(api_key=GOOGLE_API_KEY)
         model = genai.GenerativeModel("gemini-pro")
 
@@ -118,18 +117,10 @@ def test_gemini_api_music_description():
 def test_gemini_api_weather_suggestion():
     Test Gemini API for weather-based music suggestions.
     with requests_mock.Mocker() as m:
-        m.post((
-            f"https://generativelanguage.googleapis.com/"
-            f"v1beta/models/gemini-pro:generateContent"),
-            json={
-                "content": f"Suggested classical music piece: "
-                f"Beethoven's 'Pastoral Symphony'. "
-                f"This piece captures the serene, "
-                f"peaceful mood of a sunny day with"
-                f" its flowing melodies and "
-                f"pastoral themes."
-            },
-        )
+        m.post('https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent',
+              json={
+                  'content': "Suggested classical music piece: Beethoven's 'Pastoral Symphony'. This piece captures the serene, peaceful mood of a sunny day with its flowing melodies and pastoral themes."
+              })
 
         genai.configure(api_key=GOOGLE_API_KEY)
         model = genai.GenerativeModel("gemini-pro")
@@ -243,12 +234,9 @@ def test_weather_api_invalid_key():
 def test_gemini_api_invalid_key():
     Test Gemini API with invalid key.
     with requests_mock.Mocker() as m:
-        m.post((
-            f"https://generativelanguage.googleapis.com/"
-            f"v1beta/models/gemini-pro:generateContent"),
-            status_code=401,
-            json={'error': {'message': 'Invalid API key'}},
-        )
+        m.post('https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent',
+              status_code=401,
+              json={'error': {'message': 'Invalid API key'}})
 
         try:
             genai.configure(api_key="invalid_key")
