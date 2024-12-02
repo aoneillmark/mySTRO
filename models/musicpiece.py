@@ -1,6 +1,5 @@
 from database import db
 
-
 class MusicPiece(db.Model):
     __tablename__ = "music_piece"
     id = db.Column(db.Integer, primary_key=True)
