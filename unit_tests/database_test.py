@@ -91,9 +91,7 @@ def test_read_music_piece(app):
         db.session.commit()
 
         # Retrieve the piece
-        retrieved_piece = MusicPiece.query.filter_by(
-            title="Moonlight Sonata"
-        ).first()
+        retrieved_piece = MusicPiece.query.filter_by(title="Moonlight Sonata").first()
         assert retrieved_piece is not None
         assert retrieved_piece.composer == "Beethoven"
         assert retrieved_piece.subtitle == "Quasi una fantasia"

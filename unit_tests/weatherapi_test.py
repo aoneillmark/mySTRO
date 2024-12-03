@@ -47,9 +47,7 @@ def test_weather_mood_integration(client):
         # Mock Gemini response
         with patch("google.generativeai.GenerativeModel") as mock_genai:
             mock_model = Mock()
-            mock_model.generate_content.return_value.text = (
-                "Test music suggestion"
-            )
+            mock_model.generate_content.return_value.text = "Test music suggestion"
             mock_genai.return_value = mock_model
 
             response = client.get("/weather-mood")
