@@ -102,7 +102,8 @@ def test_youtube_search_url_encoding():
 
     for piece in test_pieces:
         search_query = (
-            f"{piece['composer_name']} {piece['title']} " f"{piece.get('subtitle', '')}"
+            f"{piece['composer_name']} {piece['title']} "
+            f"{piece.get('subtitle', '')}"
         )
         encoded_query = urllib.parse.quote(search_query)
         decoded_query = urllib.parse.unquote(encoded_query)

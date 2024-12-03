@@ -16,7 +16,9 @@ class MusicPiece(db.Model):
 
     # Checking for unique entries
     __table_args__ = (
-        db.UniqueConstraint("composer", "title", "subtitle", name="unique_music_piece"),
+        db.UniqueConstraint(
+            "composer", "title", "subtitle", name="unique_music_piece"
+        ),
     )
 
     # String representation

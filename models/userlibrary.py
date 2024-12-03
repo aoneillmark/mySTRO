@@ -6,7 +6,9 @@ class UserLibrary(db.Model):
     __tablename__ = "user_library"
 
     # Columns
-    user_id = db.Column(db.Integer, db.ForeignKey("users.id"), primary_key=True)
+    user_id = db.Column(
+        db.Integer, db.ForeignKey("users.id"), primary_key=True
+    )
     music_piece_id = db.Column(
         db.Integer, db.ForeignKey("music_pieces.id"), primary_key=True
     )
@@ -18,5 +20,6 @@ class UserLibrary(db.Model):
     # String representation
     def __repr__(self):
         return (
-            f"<UserLibrary User {self.user_id}, " f"MusicPiece {self.music_piece_id}>"
+            f"<UserLibrary User {self.user_id}, "
+            f"MusicPiece {self.music_piece_id}>"
         )

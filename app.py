@@ -12,7 +12,9 @@ from flask_session import Session
 
 def create_app(testing=False):
     # Initialize Flask application
-    app = Flask(__name__, template_folder="src/templates", static_folder="src/static")
+    app = Flask(
+        __name__, template_folder="src/templates", static_folder="src/static"
+    )
 
     if testing:
         # Set up test configuration
@@ -71,7 +73,9 @@ def register_routes(app):
         error = None
 
         try:
-            composers_url = "https://api.openopus.org/composer/list/name/all.json"
+            composers_url = (
+                "https://api.openopus.org/composer/list/name/all.json"
+            )
             response = requests.get(composers_url)
             response.raise_for_status()  # Raise exception for bad status codes
 
@@ -105,11 +109,15 @@ def register_routes(app):
         try:
             weather_response = requests.get(weather_url)
             weather_data = (
-                weather_response.json() if weather_response.status_code == 200 else None
+                weather_response.json()
+                if weather_response.status_code == 200
+                else None
             )
 
             if weather_data:
-                composers_url = "https://api.openopus.org/composer/list/pop.json"
+                composers_url = (
+                    "https://api.openopus.org/composer/list/pop.json"
+                )
                 composers_response = requests.get(composers_url)
                 composers = []
 
@@ -165,7 +173,8 @@ def register_routes(app):
 
         for composer_id in selected_composer_ids:
             composer_url = (
-                "https://api.openopus.org/composer/list/" f"ids/{composer_id}.json"
+                "https://api.openopus.org/composer/list/"
+                f"ids/{composer_id}.json"
             )
             composer_response = requests.get(composer_url)
             composer_name = "Unknown Composer"

@@ -1,4 +1,11 @@
-from flask import Blueprint, render_template, redirect, url_for, request, current_app
+from flask import (
+    Blueprint,
+    render_template,
+    redirect,
+    url_for,
+    request,
+    current_app,
+)
 import google.generativeai as genai
 from database import db
 from models.musicpiece import MusicPiece
@@ -16,7 +23,9 @@ def all_pieces():
     user_name = request.args.get("user_name")
 
     if not user_name:
-        return render_template("library.html", pieces=[], username_missing=True)
+        return render_template(
+            "library.html", pieces=[], username_missing=True
+        )
 
     user = User.query.filter_by(username=user_name).first()
 
@@ -78,11 +87,15 @@ def add_piece():
         user_id=user.id, music_piece_id=music_piece.id
     ).first()
     if not existing_entry:
-        user_library_entry = UserLibrary(user_id=user.id, music_piece_id=music_piece.id)
+        user_library_entry = UserLibrary(
+            user_id=user.id, music_piece_id=music_piece.id
+        )
         db.session.add(user_library_entry)
         db.session.commit()
     else:
-        print(f"Music piece '{title}' by '{composer}' is already in the library.")
+        print(
+            f"Music piece '{title}' by '{composer}' is already in the library."
+        )
 
     # Redirect to user's library
     return redirect(url_for("library.all_pieces", user_name=user_name))
@@ -118,7 +131,10 @@ def single_piece(piece_id):
         user_id=user.id, music_piece_id=piece_id
     ).first()
 
-    if request.method == "POST" and request.form.get("submit_button") == "delete":
+    if (
+        request.method == "POST"
+        and request.form.get("submit_button") == "delete"
+    ):
         if user_library_entry:
             db.session.delete(user_library_entry)
             db.session.commit()
@@ -185,8 +201,12 @@ def generate_piece_description(piece):
 def library_form():
     # Fetch the list of composers from the OpenOpus API
     try:
-        response = request.get("https://api.openopus.org/composer/list/name/all.json")
-        composers = response.json()["composers"] if response.status_code == 200 else []
+        response = request.get(
+            "https://api.openopus.org/composer/list/name/all.json"
+        )
+        composers = (
+            response.json()["composers"] if response.status_code == 200 else []
+        )
     except Exception:
         composers = []
 

@@ -26,7 +26,11 @@ def test_form_route_composers_success(client):
     with requests_mock.Mocker() as mock:
         mock.get(
             "https://api.openopus.org/composer/list/name/all.json",
-            json={"composers": [{"id": 1, "name": "Mozart", "epoch": "Classical"}]},
+            json={
+                "composers": [
+                    {"id": 1, "name": "Mozart", "epoch": "Classical"}
+                ]
+            },
         )
         response = client.get("/form")
         assert response.status_code == 200
