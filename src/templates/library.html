@@ -5,8 +5,9 @@
 {% block content %}
 <div class="bg-linen p-10">
     <h1 class="text-3xl font-bold text-pumpkin">My Library</h1>
+    <p class="text-sm text-gray-600 mt-2 mb-4">Note: Pieces can be deleted from your library using the View (👁) option.</p>
     {% if username_missing %}
-        <p class="text-red-500 mt-4">Please enter your username to view your library.</p>
+        <p class="text-red-500 mt-4">Please enter your username to view your library, and then press Enter.</p>
     {% endif %}
 
     <!-- Username Form -->
