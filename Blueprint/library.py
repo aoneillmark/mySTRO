@@ -16,9 +16,7 @@ def all_pieces():
     user_name = request.args.get("user_name")
 
     if not user_name:
-        return render_template(
-            "library.html", pieces=[], username_missing=True
-        )
+        return render_template("library.html", pieces=[], username_missing=True)
 
     user = User.query.filter_by(username=user_name).first()
 
@@ -80,15 +78,11 @@ def add_piece():
         user_id=user.id, music_piece_id=music_piece.id
     ).first()
     if not existing_entry:
-        user_library_entry = UserLibrary(
-            user_id=user.id, music_piece_id=music_piece.id
-        )
+        user_library_entry = UserLibrary(user_id=user.id, music_piece_id=music_piece.id)
         db.session.add(user_library_entry)
         db.session.commit()
     else:
-        print(
-            f"Music piece '{title}' by '{composer}' is already in the library."
-        )
+        print(f"Music piece '{title}' by '{composer}' is already in the library.")
 
     # Redirect to user's library
     return redirect(url_for("library.all_pieces", user_name=user_name))
@@ -111,7 +105,7 @@ def delete_orphaned_music_pieces():
 # Route to view or remove a single music piece from a user's library
 @library.route("/<int:piece_id>", methods=["GET", "POST"])
 def single_piece(piece_id):
-    print("Starting single_piece route")  
+    print("Starting single_piece route")
     user_name = request.args.get("user_name") or request.form.get("user_name")
     if not user_name:
         return "User not found", 404
@@ -141,26 +135,27 @@ def single_piece(piece_id):
         "library_piece.html",
         piece=piece,
         ai_description=ai_description,
-        user_name=user_name
+        user_name=user_name,
     )
+
 
 def generate_piece_description(piece):
     try:
         print("Starting description generation...")
-        
+
         # Access the API key
-        api_key = current_app.config['GOOGLE_API_KEY']
+        api_key = current_app.config["GOOGLE_API_KEY"]
         if not api_key:
             print("No Google API key found in config")
             return "Unable to generate description: API key not configured"
-            
+
         # Configure Gemini AI
         genai.configure(api_key=api_key)
         print("Configured Gemini AI")
-        
+
         model = genai.GenerativeModel("gemini-pro")
         print("Created model instance")
-        
+
         prompt = (
             f"Generate a brief, engaging description (2-3 sentences) of the following classical music piece:\n"
             f"Title: {piece.title}\n"
@@ -176,7 +171,7 @@ def generate_piece_description(piece):
         description = response.text
         print(f"Successfully generated description: {description}")
         return description
-        
+
     except Exception as e:
         print(f"Error type: {type(e)}")
         print(f"Error message: {str(e)}")
@@ -184,17 +179,14 @@ def generate_piece_description(piece):
         traceback.print_exc()
         return f"Unable to generate description. Error: {str(e)}"
 
+
 # Route to display the library form and handle composer and genre selection
 @library.route("/form", methods=["GET", "POST"])
 def library_form():
     # Fetch the list of composers from the OpenOpus API
     try:
-        response = request.get(
-            "https://api.openopus.org/composer/list/name/all.json"
-        )
-        composers = (
-            response.json()["composers"] if response.status_code == 200 else []
-        )
+        response = request.get("https://api.openopus.org/composer/list/name/all.json")
+        composers = response.json()["composers"] if response.status_code == 200 else []
     except Exception:
         composers = []
 
