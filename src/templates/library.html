@@ -64,6 +64,27 @@
     </ul>
 </div>
 
+<div class="flex" style="gap: 4px; margin-left: auto;">
+    <!-- Email Share -->
+    <a 
+        href="mailto:?subject=My Classical Music Collection on MySTRO&body=Hi!%0D%0A%0D%0ACheck out my classical music collection on MySTRO. Here are some pieces I've saved:%0D%0A%0D%0A{% for piece in pieces %}• {{ piece.composer }}: {{ piece.title }}{% if piece.opus_number %} ({{ piece.opus_number }}){% endif %}%0D%0A{% endfor %}%0D%0A%0D%0AYou can explore more classical music at MySTRO!%0D%0A"
+        class="inline-flex items-center px-6 py-2 text-white shadow-lg hover:bg-[#458F00] font-medium transition-colors"
+        style="background-color: #3DA200; font-size: 16px; letter-spacing: 0.5px; margin-right: 24px; border-radius: 20px;"
+    >
+        📧 Email
+    </a>
+
+    <!-- Twitter Share -->
+    <a 
+    href="https://twitter.com/intent/tweet?text={% if pieces %}Currently listening to {{ pieces[0].composer }}'s {{ pieces[0].title }} on MySTRO 🎵{% else %}Exploring classical music on MySTRO 🎵{% endif %}"
+    target="_blank"
+        rel="noopener noreferrer"
+        class="inline-flex items-center px-6 py-2 text-white shadow-lg hover:bg-[#458F00] font-medium transition-colors"
+        style="background-color: #3DA200; font-size: 16px; letter-spacing: 0.5px; border-radius: 20px;"
+    >
+        🐦 Tweet
+    </a>
+</div>
 
 <script>
     function debounce(func, wait) {
