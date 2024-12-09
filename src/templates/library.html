@@ -66,27 +66,42 @@
 
 
 <script>
+    /**
+     * Debounce function to limit the rate at which a function is executed.
+     * @param {Function} func - The function to debounce.
+     * @param {number} wait - The delay in milliseconds before invoking the function.
+     * @returns {Function} - A debounced version of the input function.
+     */
     function debounce(func, wait) {
-        let timeout;
+        let timeout; // Variable to hold the timeout ID
         return function (...args) {
-            clearTimeout(timeout);
-            timeout = setTimeout(() => func.apply(this, args), wait);
+            clearTimeout(timeout); // Clear any existing timeout to reset the delay
+            timeout = setTimeout(() => func.apply(this, args), wait); // Set a new timeout
         };
     }
 
+    /**
+     * Filters a library of works based on a search term.
+     * @param {string} searchTerm - The term to search for in titles or composer names.
+     */
     function searchLibrary(searchTerm) {
-        const works = document.querySelectorAll('.work-item');
-        searchTerm = searchTerm.toLowerCase();
+        const works = document.querySelectorAll('.work-item'); // Select all work items
+        searchTerm = searchTerm.toLowerCase(); // Normalize the search term to lowercase for case-insensitive comparison
 
         works.forEach(work => {
-            const title = work.dataset.title.toLowerCase();
-            const composer = work.dataset.composer.toLowerCase();
-            const shouldShow = title.includes(searchTerm) || composer.includes(searchTerm);
-            work.style.display = shouldShow ? 'block' : 'none';
+            const title = work.dataset.title.toLowerCase(); // Get the work's title and convert to lowercase
+            const composer = work.dataset.composer.toLowerCase(); // Get the composer's name and convert to lowercase
+            const shouldShow = title.includes(searchTerm) || composer.includes(searchTerm); // Check if the search term matches the title or composer
+            work.style.display = shouldShow ? 'block' : 'none'; // Show or hide the work item based on the search result
         });
     }
 
-    const debouncedSearch = debounce(searchLibrary, 200);
+    /**
+     * Create a debounced version of the searchLibrary function.
+     * This reduces the frequency of calls when the user types in the search input field.
+     */
+    const debouncedSearch = debounce(searchLibrary, 200); // Debounce with a delay of 200ms
 </script>
+
 
 {% endblock %}

@@ -83,79 +83,101 @@
 </div>
 
 <script>
-   if (window.history.replaceState) {
-       window.history.replaceState(null, null, window.location.href);
-   }
+    // Prevent form resubmission on page reload
+    if (window.history.replaceState) {
+        window.history.replaceState(null, null, window.location.href);
+    }
 
-   function debounce(func, wait) {
-       let timeout;
-       return function(...args) {
-           clearTimeout(timeout);
-           timeout = setTimeout(() => func.apply(this, args), wait);
-       };
-   }
+    /**
+     * Debounce function to limit the rate at which a function is executed.
+     * @param {Function} func - The function to debounce.
+     * @param {number} wait - The delay in milliseconds.
+     * @returns {Function} - A debounced version of the input function.
+     */
+    function debounce(func, wait) {
+        let timeout;
+        return function (...args) {
+            clearTimeout(timeout); // Clear the previous timeout if it exists
+            timeout = setTimeout(() => func.apply(this, args), wait); // Set a new timeout
+        };
+    }
 
-   function filterWorks(filter, searchTerm = '', composerFilter = null) {
-       const works = document.querySelectorAll('.work-item');
-       const filterButtons = document.querySelectorAll('.filter-button');
-       searchTerm = searchTerm ? searchTerm.toLowerCase() : '';
-       
-       if (!composerFilter) {
-           filterButtons.forEach(button => {
-               if (!button.classList.contains('composer')) {
-                   button.classList.toggle('active', button.dataset.filter === filter);
-               }
-           });
-       } else {
-           document.querySelectorAll('.filter-button.composer').forEach(button => {
-               button.classList.toggle('active', button.dataset.composer === composerFilter);
-           });
-       }
+    /**
+     * Filters the list of works based on filter criteria such as category, search term, or composer.
+     * @param {string} filter - The filter category (e.g., 'popular', 'recommended').
+     * @param {string} [searchTerm=''] - The search term for filtering by title.
+     * @param {string|null} [composerFilter=null] - The specific composer to filter by.
+     */
+    function filterWorks(filter, searchTerm = '', composerFilter = null) {
+        const works = document.querySelectorAll('.work-item'); // Select all work items
+        const filterButtons = document.querySelectorAll('.filter-button'); // Select all filter buttons
+        searchTerm = searchTerm ? searchTerm.toLowerCase() : ''; // Normalize search term to lowercase
 
-       works.forEach(work => {
-           const isPopular = work.dataset.popular === 'true';
-           const isRecommended = work.dataset.recommended === 'true';
-           const composer = work.dataset.composer;
-           const titleElement = work.querySelector('.work-title');
-           const title = titleElement.textContent.toLowerCase();
-           
-           let shouldShow = true;
+        // Handle non-composer filter buttons
+        if (!composerFilter) {
+            filterButtons.forEach(button => {
+                if (!button.classList.contains('composer')) { // Skip composer filters
+                    button.classList.toggle('active', button.dataset.filter === filter);
+                }
+            });
+        } else {
+            // Handle composer-specific filter buttons
+            document.querySelectorAll('.filter-button.composer').forEach(button => {
+                button.classList.toggle('active', button.dataset.composer === composerFilter);
+            });
+        }
 
-           if (filter === 'popular') shouldShow = isPopular;
-           if (filter === 'recommended') shouldShow = isRecommended;
+        // Filter and update the display of work items
+        works.forEach(work => {
+            const isPopular = work.dataset.popular === 'true'; // Check if the work is marked as popular
+            const isRecommended = work.dataset.recommended === 'true'; // Check if the work is recommended
+            const composer = work.dataset.composer; // Get the composer of the work
+            const titleElement = work.querySelector('.work-title'); // Get the title element
+            const title = titleElement.textContent.toLowerCase(); // Normalize the title to lowercase
 
-           if (composerFilter && composerFilter !== 'all') {
-               shouldShow = shouldShow && (composer === composerFilter);
-           }
+            let shouldShow = true; // Determine if the work should be displayed
 
-           if (searchTerm) {
-               shouldShow = shouldShow && title.includes(searchTerm);
-           }
+            if (filter === 'popular') shouldShow = isPopular;
+            if (filter === 'recommended') shouldShow = isRecommended;
 
-           work.style.display = shouldShow ? 'grid' : 'none';
+            if (composerFilter && composerFilter !== 'all') {
+                shouldShow = shouldShow && (composer === composerFilter);
+            }
 
-           if (searchTerm && shouldShow) {
-               const regex = new RegExp(`(${searchTerm})`, 'gi');
-               titleElement.innerHTML = titleElement.textContent.replace(
-                   regex, 
-                   '<span class="highlight">$1</span>'
-               );
-           } else {
-               titleElement.innerHTML = titleElement.textContent;
-           }
-       });
-   }
+            if (searchTerm) {
+                shouldShow = shouldShow && title.includes(searchTerm); // Match title with search term
+            }
 
-   function filterByComposer(composerName) {
-       const activeFilter = document.querySelector('.filter-button:not(.composer).active').dataset.filter;
-       const searchTerm = document.querySelector('.search-input').value;
-       filterWorks(activeFilter, searchTerm, composerName);
-   }
+            work.style.display = shouldShow ? 'grid' : 'none'; // Show or hide the work
 
-   const debouncedSearch = debounce((searchTerm) => {
-       const activeFilter = document.querySelector('.filter-button:not(.composer).active').dataset.filter;
-       const activeComposer = document.querySelector('.filter-button.composer.active').dataset.composer;
-       filterWorks(activeFilter, searchTerm, activeComposer);
-   }, 200);
-</script>
+            // Highlight matching search term in the title
+            if (searchTerm && shouldShow) {
+                const regex = new RegExp(`(${searchTerm})`, 'gi'); // Create regex for search term
+                titleElement.innerHTML = titleElement.textContent.replace(
+                    regex,
+                    '<span class="highlight">$1</span>'
+                );
+            } else {
+                titleElement.innerHTML = titleElement.textContent; // Reset title to original
+            }
+        });
+    }
+
+    /**
+     * Filters the works by a specific composer.
+     * @param {string} composerName - The name of the composer to filter by.
+     */
+    function filterByComposer(composerName) {
+        const activeFilter = document.querySelector('.filter-button:not(.composer).active').dataset.filter; // Get the active filter
+        const searchTerm = document.querySelector('.search-input').value; // Get the current search term
+        filterWorks(activeFilter, searchTerm, composerName); // Apply filtering
+    }
+
+    // Create a debounced function for search input to avoid excessive calls
+    const debouncedSearch = debounce((searchTerm) => {
+        const activeFilter = document.querySelector('.filter-button:not(.composer).active').dataset.filter; // Get the active filter
+        const activeComposer = document.querySelector('.filter-button.composer.active').dataset.composer; // Get the active composer filter
+        filterWorks(activeFilter, searchTerm, activeComposer); // Apply filtering
+    }, 200); // Delay of 200ms
+</script
 {% endblock %}
