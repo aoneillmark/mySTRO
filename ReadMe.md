@@ -94,8 +94,13 @@ flask run
 ## Testing
 Run the test suite using:
 ```bash
-pytest api_test.py
-pytest database_test.py
+pytest unit_tests/app_test.py
+pytest unit_tests/database_test.py
+pytest unit_tests/email_test.py
+pytest unit_tests/geminiapi_test.py
+pytest unit_tests/openopusapi_test.py
+pytest unit_tests/weatherapi_test.py
+pytest unit_tests/youtube_test.py
 ```
 ## CI/CD
 The project uses GitHub Actions for continuous integration and deployment, including:
