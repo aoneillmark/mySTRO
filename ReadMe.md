@@ -46,13 +46,14 @@ A Flask-based web application that recommends classical music based on weather c
 
 1. Clone the repository:
 ```bash
-git clone [repository-url]
+git clone git@github.com:tiagoriely/SSE_ProjectII.git
 ```
 
 2. Create and activate virtual environment:
 ```bash
-python -m venv .venv
-source .venv/bin/activate
+python -m venv venv
+source venv/bin/activate  # Linux/Mac
+venv\Scripts\activate     # Windows
 ```
 
 3. Install Python dependencies:
